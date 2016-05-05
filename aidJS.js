@@ -1,9 +1,11 @@
 ﻿// aidJS 
 // pure js library
 // ie9+, chrome1+, firefox4+, opera1+, safari1+
+// version 0.1.0 2016/05/05
+//  - add $count in $q
 // version 0.0.0 2016/05/05
 var $ = {
-    $version: '0.0.0',
+    $version: '0.1.0',
     // ajax
     // ie9+
     // version 0.0.0 2016/05/05   
@@ -73,7 +75,7 @@ var $ = {
         if (elements.length == 0) {
             throw 'not found element';
             return false;
-        }
+        }      
 
         // add class
         // ie8+
@@ -104,6 +106,8 @@ var $ = {
             return this;
         }
 
+
+
         // attribute
         // ie9+
         // version 0.0.0 2016/05/05
@@ -116,6 +120,13 @@ var $ = {
                 return elements[0].getAttribute(attribute);
             }
             return this;
+        }
+
+        // count
+        // ie9+
+        // version 0.0.0 2016/05/05
+        function count() {
+            return elements.length;
         }
 
         // style
@@ -150,7 +161,7 @@ var $ = {
         }
 
         // has class
-        // ie9+
+        // ie8+
         // version 0.0.0 2016/05/05
         function hasClass(className) {
             if (elements[0].classList)
@@ -192,7 +203,7 @@ var $ = {
         }
 
         // remove class
-        // ie9+
+        // ie8+
         // version 0.0.0 2016/05/05
         function removeClass(className) {
             if (elements[0].classList) {
@@ -306,6 +317,7 @@ var $ = {
             $addClass: addClass,
             $append: append,
             $attr: attr,
+            $count:count,
             $css: css,
             $empty: empty,
             $eq:eq,
