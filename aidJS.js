@@ -1,11 +1,16 @@
-﻿// aidJS 
-// pure js library
-// ie9+, chrome1+, firefox4+, opera1+, safari1+
-// version 0.1.0 2016/05/05
-//  - add $count in $q
-// version 0.0.0 2016/05/05
+﻿/*
+ aidJS v0.1.0
+ (c) 2016-2015 ITTEN, Inc. http://itten.ir 
+ ie9+, chrome5+, firefox4+, opera12+, safari5+
+ version 0.2.0 2016/05/05
+  - add polyfill propertie arrgument in $css
+  - add $scrollTop in $q
+ version 0.1.0 2016/05/05
+  - add $count in $q
+ version 0.0.0 2016/05/05
+*/
 var $ = {
-    $version: '0.1.0',
+    $version: '0.2.0',
     // ajax
     // ie9+
     // version 0.0.0 2016/05/05   
@@ -65,17 +70,17 @@ var $ = {
     $q: function (element) {
 
         // element
-        var elements=null;
+        var elements = null;
         if (element instanceof Object) {
             elements = [element];
         } else {
             elements = document.querySelectorAll(element);
-        }        
+        }
 
         if (elements.length == 0) {
             throw 'not found element';
             return false;
-        }      
+        }
 
         // add class
         // ie8+
@@ -123,22 +128,30 @@ var $ = {
         }
 
         // count
-        // ie9+
+        // ie8+
         // version 0.0.0 2016/05/05
         function count() {
             return elements.length;
         }
 
         // style
-        // ie9+
+        // ie9+, chrome5+, firefox4+, opera12+, safari5+
+        // version 0.1.0 2016/05/05
+        //  - add polyfill propertie arrgument
         // version 0.0.0 2016/05/05
         function css(propertie, value) {
-            if (value !== undefined) {
+            if (typeof propertie == 'object' || (typeof propertie == 'string' && typeof value == 'string')) {
                 Array.prototype.forEach.call(elements, function (element, index) {
-                    element.style[propertie] = value;
+                    if (typeof propertie == 'string') {
+                        element.style[propertie] = value;
+                    } else {
+                        for (key in propertie) {
+                            element.style[key] = propertie[key];
+                        }
+                    }
                 });
             } else {
-                return getComputedStyle(elements[0])[propertie];
+                getComputedStyle(elements[0])[propertie];
             }
             return this;
         }
@@ -291,6 +304,13 @@ var $ = {
             return this;
         }
 
+        // scrollTop
+        // ie9+
+        // version 0.0.0 2016/05/05
+        function scrollTop() {
+            return elements[0].scrollTop;
+        }
+
         // show
         // ie9+
         // version 0.0.0 2016/05/05
@@ -317,10 +337,10 @@ var $ = {
             $addClass: addClass,
             $append: append,
             $attr: attr,
-            $count:count,
+            $count: count,
             $css: css,
             $empty: empty,
-            $eq:eq,
+            $eq: eq,
             $hasClass: hasClass,
             $hide: hide,
             $html: html,
@@ -334,6 +354,7 @@ var $ = {
             $outerWidth: outerWidth,
             $parent: parent,
             $prepend: prepend,
+            $scrollTop: scrollTop,
             $show: show,
             $text: text,
         };
