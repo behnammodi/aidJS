@@ -1,7 +1,9 @@
 ﻿/*
- aidJS v0.1.0
- (c) 2016-2015 ITTEN, Inc. http://itten.ir 
+ aidJS v0.3.0
+ (c) 2016 ITTEN, Inc. http://itten.ir 
  ie9+, chrome5+, firefox4+, opera12+, safari5+
+ version 0.3.0 2016/05/06
+  - redesign structure
  version 0.2.0 2016/05/05
   - add polyfill propertie arrgument in $css
   - add $scrollTop in $q
@@ -9,356 +11,363 @@
   - add $count in $q
  version 0.0.0 2016/05/05
 */
-var $ = {
-    $version: '0.2.0',
-    // ajax
-    // ie9+
-    // version 0.0.0 2016/05/05   
-    $ajax: function (params) {
-        params = params || {};
-        var request = new XMLHttpRequest();
-        request.open(params.type, params.url, true);
-        request.onload = function () {
-            if (request.status >= 200 && request.status < 400) {
-                if (params.success instanceof Function) {
-                    params.success(request);
-                }
-            } else {
-                // We reached our target server, but it returned an error
-            }
-        };
-        request.onerror = function () {
-            if (params.error instanceof Function) {
-                params.error(request);
-            }
-        };
-        request.send();
-    },
-    // browser
-    // ie9+
-    // version 0.0.0 2016/05/05
-    $browser: {
-        $name: null,
-        $version: null,
-        init: function () {
-            var ua = navigator.userAgent, tem,
-            M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
-            if (/trident/i.test(M[1])) {
-                tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
-                return 'IE ' + (tem[1] || '');
-            }
-            if (M[1] === 'Chrome') {
-                tem = ua.match(/\b(OPR|Edge)\/(\d+)/);
-                if (tem != null) return tem.slice(1).join(' ').replace('OPR', 'Opera');
-            }
-            M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
-            if ((tem = ua.match(/version\/(\d+)/i)) != null) M.splice(1, 1, tem[1]);
-            this.$name = M[0];
-            this.$version = M[1];
-        }
-    },
-    // log
-    // ie8+, chrome1+, firefox4+, opera1+, safari1+
-    // version 0.0.0 2016/05/05
-    $log: function () {
-        console.log('---------------', new Date(), '---------------');
-        console.log(arguments);
-    },
-    // select element
-    // ie9+
-    // version 0.0.0 2016/05/05
-    $q: function (element) {
 
-        // element
-        var elements = null;
-        if (element instanceof Object) {
-            elements = [element];
+// select element
+// ie9+
+// version 0.0.0 2016/05/05
+var aidJS = function (element) {
+
+    if (element === undefined) {
+        return false;
+    }
+
+    // element
+    var elements = null;
+    if (element instanceof Object) {
+        elements = [element];
+    } else {
+        elements = document.querySelectorAll(element);
+    }
+
+    if (elements.length == 0) {
+        throw 'not found element';
+        return false;
+    }
+
+    // add class
+    // ie8+
+    // version 0.0.0 2016/05/05
+    function addClass(className) {
+        if (elements[0].classList) {
+            Array.prototype.forEach.call(elements, function (element, index) {
+                className = className.split(' ');
+                className.forEach(function (value) {
+                    element.classList.add(value);
+                })
+            });
         } else {
-            elements = document.querySelectorAll(element);
-        }
-
-        if (elements.length == 0) {
-            throw 'not found element';
-            return false;
-        }
-
-        // add class
-        // ie8+
-        // version 0.0.0 2016/05/05
-        function addClass(className) {
-            if (elements[0].classList) {
-                Array.prototype.forEach.call(elements, function (element, index) {
-                    className = className.split(' ');
-                    className.forEach(function (value) {
-                        element.classList.add(value);
-                    })
-                });
-            } else {
-                Array.prototype.forEach.call(elements, function (element, index) {
-                    element.className += ' ' + className;
-                });
-            }
-            return this;
-        }
-
-        // append
-        // ie9+
-        // version 0.0.0
-        function append(appendElement) {
             Array.prototype.forEach.call(elements, function (element, index) {
-                element.appendChild(appendElement);
+                element.className += ' ' + className;
             });
-            return this;
         }
+        return this;
+    }
+
+    // append
+    // ie9+
+    // version 0.0.0
+    function append(appendElement) {
+        Array.prototype.forEach.call(elements, function (element, index) {
+            element.appendChild(appendElement);
+        });
+        return this;
+    }
 
 
 
-        // attribute
-        // ie9+
-        // version 0.0.0 2016/05/05
-        function attr(attribute, value) {
-            if (value) {
-                Array.prototype.forEach.call(elements, function (element, index) {
-                    element.setAttribute(attribute, value);
-                });
-            } else {
-                return elements[0].getAttribute(attribute);
-            }
-            return this;
+    // attribute
+    // ie9+
+    // version 0.0.0 2016/05/05
+    function attr(attribute, value) {
+        if (value) {
+            Array.prototype.forEach.call(elements, function (element, index) {
+                element.setAttribute(attribute, value);
+            });
+        } else {
+            return elements[0].getAttribute(attribute);
         }
+        return this;
+    }
 
-        // count
-        // ie8+
-        // version 0.0.0 2016/05/05
-        function count() {
-            return elements.length;
-        }
+    // count
+    // ie8+
+    // version 0.0.0 2016/05/05
+    function count() {
+        return elements.length;
+    }
 
-        // style
-        // ie9+, chrome5+, firefox4+, opera12+, safari5+
-        // version 0.1.0 2016/05/05
-        //  - add polyfill propertie arrgument
-        // version 0.0.0 2016/05/05
-        function css(propertie, value) {
-            if (typeof propertie == 'object' || (typeof propertie == 'string' && typeof value == 'string')) {
-                Array.prototype.forEach.call(elements, function (element, index) {
-                    if (typeof propertie == 'string') {
-                        element.style[propertie] = value;
-                    } else {
-                        for (key in propertie) {
-                            element.style[key] = propertie[key];
-                        }
+    // style
+    // ie9+, chrome5+, firefox4+, opera12+, safari5+
+    // version 0.1.0 2016/05/05
+    //  - add polyfill propertie arrgument
+    // version 0.0.0 2016/05/05
+    function css(propertie, value) {
+        if (typeof propertie == 'object' || (typeof propertie == 'string' && typeof value == 'string')) {
+            Array.prototype.forEach.call(elements, function (element, index) {
+                if (typeof propertie == 'string') {
+                    element.style[propertie] = value;
+                } else {
+                    for (key in propertie) {
+                        element.style[key] = propertie[key];
                     }
-                });
-            } else {
-                getComputedStyle(elements[0])[propertie];
-            }
-            return this;
-        }
-
-        // empty
-        // ie9+
-        // version 0.0.0 2016/05/05
-        function empty() {
-            Array.prototype.forEach.call(elements, function (element, index) {
-                element.innerHTML = '';
+                }
             });
-            return this;
+        } else {
+            getComputedStyle(elements[0])[propertie];
         }
+        return this;
+    }
 
-        // eq
-        // ie8+
-        // version 0.0.0 2016/05/05
-        function eq(index) {
-            return $.$q(elements[index]);;
-        }
+    // empty
+    // ie9+
+    // version 0.0.0 2016/05/05
+    function empty() {
+        Array.prototype.forEach.call(elements, function (element, index) {
+            element.innerHTML = '';
+        });
+        return this;
+    }
 
-        // has class
-        // ie8+
-        // version 0.0.0 2016/05/05
-        function hasClass(className) {
-            if (elements[0].classList)
-                return elements[0].classList.contains(className);
-            else
-                return new RegExp('(^| )' + className + '( |$)', 'gi').test(elements[0].className);
-        }
+    // eq
+    // ie8+
+    // version 0.0.0 2016/05/05
+    function eq(index) {
+        return $.$q(elements[index]);;
+    }
 
-        // hide
-        // ie9+
-        // version 0.0.0 2016/05/05
-        function hide() {
-            css('display', 'none');
-            return this;
-        }
+    // has class
+    // ie8+
+    // version 0.0.0 2016/05/05
+    function hasClass(className) {
+        if (elements[0].classList)
+            return elements[0].classList.contains(className);
+        else
+            return new RegExp('(^| )' + className + '( |$)', 'gi').test(elements[0].className);
+    }
 
-        // html
-        // ie9+
-        // version 0.0.0 2016/05/05
-        function html(content) {
-            if (content) {
-                Array.prototype.forEach.call(elements, function (element, index) {
-                    element.innerHTML = content;
-                });
-            } else {
-                return elements[0].innerHTML;
-            }
-            return this;
-        }
+    // hide
+    // ie9+
+    // version 0.0.0 2016/05/05
+    function hide() {
+        css('display', 'none');
+        return this;
+    }
 
-        // remove
-        // ie9+
-        // version 0.0.0 2016/05/05
-        function remove() {
+    // html
+    // ie9+
+    // version 0.0.0 2016/05/05
+    function html(content) {
+        if (content) {
             Array.prototype.forEach.call(elements, function (element, index) {
-                element.parentNode.removeChild(element);
+                element.innerHTML = content;
             });
-            return this;
+        } else {
+            return elements[0].innerHTML;
         }
+        return this;
+    }
 
-        // remove class
-        // ie8+
-        // version 0.0.0 2016/05/05
-        function removeClass(className) {
-            if (elements[0].classList) {
-                Array.prototype.forEach.call(elements, function (element, index) {
-                    element.classList.remove(className);
-                });
-            }
-            else {
-                Array.prototype.forEach.call(elements, function (element, index) {
-                    element.className = element.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
-                });
-            }
-            return this;
-        }
+    // remove
+    // ie9+
+    // version 0.0.0 2016/05/05
+    function remove() {
+        Array.prototype.forEach.call(elements, function (element, index) {
+            element.parentNode.removeChild(element);
+        });
+        return this;
+    }
 
-        // remove event listener
-        // ie9+ , chrome1+ , firefox1+ , opera7+, safari1+
-        // version 0.0.0 2016/05/05
-        function off(eventName, eventHandler) {
+    // remove class
+    // ie8+
+    // version 0.0.0 2016/05/05
+    function removeClass(className) {
+        if (elements[0].classList) {
             Array.prototype.forEach.call(elements, function (element, index) {
-                element.removeEventListener(eventName, eventHandler);
+                element.classList.remove(className);
             });
-            return this;
         }
-
-        // offset
-        // ie9+
-        // version 0.0.0 2016/05/05
-        function offset() {
-            return elements[0].getBoundingClientRect();
-        }
-
-        // add event listener
-        // ie9+
-        // version 0.0.0 2016/05/05
-        function on(eventName, eventHandler) {
+        else {
             Array.prototype.forEach.call(elements, function (element, index) {
-                element.addEventListener(eventName, eventHandler);
+                element.className = element.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
             });
-            return this;
         }
+        return this;
+    }
 
-        // outerWidth
-        // ie9+
-        // version 0.0.0 2016/05/05
-        function outerHeight(withMargin) {
-            if (withMargin) {
-                var height = elements[0].offsetHeight;
-                var style = getComputedStyle(elements[0]);
-                height += parseInt(style.marginTop) + parseInt(style.marginBottom);
-                return height;
-            } else {
-                return elements[0].offsetHeight
-            }
+    // remove event listener
+    // ie9+ , chrome1+ , firefox1+ , opera7+, safari1+
+    // version 0.0.0 2016/05/05
+    function off(eventName, eventHandler) {
+        Array.prototype.forEach.call(elements, function (element, index) {
+            element.removeEventListener(eventName, eventHandler);
+        });
+        return this;
+    }
+
+    // offset
+    // ie9+
+    // version 0.0.0 2016/05/05
+    function offset() {
+        return elements[0].getBoundingClientRect();
+    }
+
+    // add event listener
+    // ie9+
+    // version 0.0.0 2016/05/05
+    function on(eventName, eventHandler) {
+        Array.prototype.forEach.call(elements, function (element, index) {
+            element.addEventListener(eventName, eventHandler);
+        });
+        return this;
+    }
+
+    // outerWidth
+    // ie9+
+    // version 0.0.0 2016/05/05
+    function outerHeight(withMargin) {
+        if (withMargin) {
+            var height = elements[0].offsetHeight;
+            var style = getComputedStyle(elements[0]);
+            height += parseInt(style.marginTop) + parseInt(style.marginBottom);
+            return height;
+        } else {
+            return elements[0].offsetHeight
         }
+    }
 
-        // outerWidth
-        // ie9+
-        // version 0.0.0 2016/05/05
-        function outerWidth(withMargin) {
-            if (withMargin) {
-                var width = elements[0].offsetWidth;
-                var style = getComputedStyle(elements[0]);
-                width += parseInt(style.marginLeft) + parseInt(style.marginRight);
-                return width;
-            } else {
-                return elements[0].offsetWidth
-            }
+    // outerWidth
+    // ie9+
+    // version 0.0.0 2016/05/05
+    function outerWidth(withMargin) {
+        if (withMargin) {
+            var width = elements[0].offsetWidth;
+            var style = getComputedStyle(elements[0]);
+            width += parseInt(style.marginLeft) + parseInt(style.marginRight);
+            return width;
+        } else {
+            return elements[0].offsetWidth
         }
+    }
 
-        // parent
-        // ie9+
-        // version 0.0.0 2016/05/05
-        function parent() {
-            return elements[0].parentNode;
-        }
+    // parent
+    // ie9+
+    // version 0.0.0 2016/05/05
+    function parent() {
+        return elements[0].parentNode;
+    }
 
-        // prepend
-        // ie9+
-        // version 0.0.0 2016/05/05
-        function prepend(insertElement) {
+    // prepend
+    // ie9+
+    // version 0.0.0 2016/05/05
+    function prepend(insertElement) {
+        Array.prototype.forEach.call(elements, function (element, index) {
+            element.insertBefore(insertElement, element.firstChild);
+        });
+        return this;
+    }
+
+    // scrollTop
+    // ie9+
+    // version 0.0.0 2016/05/05
+    function scrollTop() {
+        return elements[0].scrollTop;
+    }
+
+    // show
+    // ie9+
+    // version 0.0.0 2016/05/05
+    function show() {
+        css('display', '');
+        return this;
+    }
+
+    // text content
+    // ie9+
+    // version 0.0.0 2016/05/05
+    function text(content) {
+        if (content !== undefined) {
             Array.prototype.forEach.call(elements, function (element, index) {
-                element.insertBefore(insertElement, element.firstChild);
+                element.textContent = content;
             });
-            return this;
+        } else {
+            return elements[0].textContent;
         }
+        return this;
+    }
 
-        // scrollTop
-        // ie9+
-        // version 0.0.0 2016/05/05
-        function scrollTop() {
-            return elements[0].scrollTop;
-        }
+    return {
+        addClass: addClass,
+        append: append,
+        attr: attr,
+        count: count,
+        css: css,
+        empty: empty,
+        eq: eq,
+        hasClass: hasClass,
+        hide: hide,
+        html: html,
+        remove: remove,
+        removeClass: removeClass,
+        outerHeight: outerHeight,
+        outerWidth: outerWidth,
+        off: off,
+        offset: offset,
+        on: on,
+        outerWidth: outerWidth,
+        parent: parent,
+        prepend: prepend,
+        scrollTop: scrollTop,
+        show: show,
+        text: text,
+    };
+}
 
-        // show
-        // ie9+
-        // version 0.0.0 2016/05/05
-        function show() {
-            css('display', '');
-            return this;
-        }
+aidJS.version = '0.3.0',
 
-        // text content
-        // ie9+
-        // version 0.0.0 2016/05/05
-        function text(content) {
-            if (content !== undefined) {
-                Array.prototype.forEach.call(elements, function (element, index) {
-                    element.textContent = content;
-                });
-            } else {
-                return elements[0].textContent;
+// ajax
+// ie9+
+// version 0.0.0 2016/05/05   
+aidJS.ajax = function (params) {
+    params = params || {};
+    var request = new XMLHttpRequest();
+    request.open(params.type, params.url, true);
+    request.onload = function () {
+        if (request.status >= 200 && request.status < 400) {
+            if (params.success instanceof Function) {
+                params.success(request);
             }
-            return this;
+        } else {
+            // We reached our target server, but it returned an error
         }
+    };
+    request.onerror = function () {
+        if (params.error instanceof Function) {
+            params.error(request);
+        }
+    };
+    request.send();
+};
 
-        return {
-            $addClass: addClass,
-            $append: append,
-            $attr: attr,
-            $count: count,
-            $css: css,
-            $empty: empty,
-            $eq: eq,
-            $hasClass: hasClass,
-            $hide: hide,
-            $html: html,
-            $remove: remove,
-            $removeClass: removeClass,
-            $outerHeight: outerHeight,
-            $outerWidth: outerWidth,
-            $off: off,
-            $offset: offset,
-            $on: on,
-            $outerWidth: outerWidth,
-            $parent: parent,
-            $prepend: prepend,
-            $scrollTop: scrollTop,
-            $show: show,
-            $text: text,
-        };
+// browser
+// ie9+
+// version 0.0.0 2016/05/05
+aidJS.browser = {
+    name: null,
+    version: null,
+    init: function () {
+        var ua = navigator.userAgent, tem,
+        M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+        if (/trident/i.test(M[1])) {
+            tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
+            return 'IE ' + (tem[1] || '');
+        }
+        if (M[1] === 'Chrome') {
+            tem = ua.match(/\b(OPR|Edge)\/(\d+)/);
+            if (tem != null) return tem.slice(1).join(' ').replace('OPR', 'Opera');
+        }
+        M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
+        if ((tem = ua.match(/version\/(\d+)/i)) != null) M.splice(1, 1, tem[1]);
+        this.name = M[0];
+        this.version = M[1];
     }
 };
 
-$.$browser.init();
+// log
+// ie8+, chrome1+, firefox4+, opera1+, safari1+
+// version 0.0.0 2016/05/05
+aidJS.log = function () {
+    console.log('---------------', new Date(), '---------------');
+    console.log(arguments);
+};
+
+window.a = window.aidJS = a = aidJS;
