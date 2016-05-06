@@ -1,20 +1,24 @@
 ﻿/*
- aidJS v0.3.0
- (c) 2016 ITTEN, Inc. http://itten.ir 
- ie9+, chrome5+, firefox4+, opera12+, safari5+
- version 0.3.0 2016/05/06
-  - redesign structure
- version 0.2.0 2016/05/05
-  - add polyfill propertie arrgument in $css
-  - add $scrollTop in $q
- version 0.1.0 2016/05/05
-  - add $count in $q
- version 0.0.0 2016/05/05
-*/
+ * aidJS v0.3.1
+ * (c) 2016 ITTEN, Inc. http://itten.ir 
+ * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.3.1 2016/05/06
+ *  - fixed bug in a.ajax
+ * version 0.3.0 2016/05/06
+ *  - redesign structure
+ * version 0.2.0 2016/05/05
+ *  - add polyfill propertie arrgument in css
+ *  - add scrollTop in a
+ * version 0.1.0 2016/05/05
+ *  - add count in a
+ * version 0.0.0 2016/05/05
+ */
 
-// select element
-// ie9+
-// version 0.0.0 2016/05/05
+/*
+ * select element
+ * ie9+
+ * version 0.0.0 2016/05/05
+ */
 var aidJS = function (element) {
 
     if (element === undefined) {
@@ -34,9 +38,11 @@ var aidJS = function (element) {
         return false;
     }
 
-    // add class
-    // ie8+
-    // version 0.0.0 2016/05/05
+    /*
+     * add class
+     * ie8+
+     * version 0.0.0 2016/05/05
+     */ 
     function addClass(className) {
         if (elements[0].classList) {
             Array.prototype.forEach.call(elements, function (element, index) {
@@ -53,9 +59,11 @@ var aidJS = function (element) {
         return this;
     }
 
-    // append
-    // ie9+
-    // version 0.0.0
+    /*
+     * append
+     * ie9+
+     * version 0.0.0
+     */  
     function append(appendElement) {
         Array.prototype.forEach.call(elements, function (element, index) {
             element.appendChild(appendElement);
@@ -63,11 +71,11 @@ var aidJS = function (element) {
         return this;
     }
 
-
-
-    // attribute
-    // ie9+
-    // version 0.0.0 2016/05/05
+    /*
+     * attribute
+     * ie9+
+     * version 0.0.0 2016/05/05
+     */
     function attr(attribute, value) {
         if (value) {
             Array.prototype.forEach.call(elements, function (element, index) {
@@ -79,18 +87,22 @@ var aidJS = function (element) {
         return this;
     }
 
-    // count
-    // ie8+
-    // version 0.0.0 2016/05/05
+    /*
+     * count
+     * ie8+
+     * version 0.0.0 2016/05/05
+     */
     function count() {
         return elements.length;
     }
 
-    // style
-    // ie9+, chrome5+, firefox4+, opera12+, safari5+
-    // version 0.1.0 2016/05/05
-    //  - add polyfill propertie arrgument
-    // version 0.0.0 2016/05/05
+    /*
+     * style
+     * ie9+, chrome5+, firefox4+, opera12+, safari5+
+     * version 0.1.0 2016/05/05
+     *  - add polyfill propertie arrgument
+     * version 0.0.0 2016/05/05
+     */
     function css(propertie, value) {
         if (typeof propertie == 'object' || (typeof propertie == 'string' && typeof value == 'string')) {
             Array.prototype.forEach.call(elements, function (element, index) {
@@ -108,9 +120,11 @@ var aidJS = function (element) {
         return this;
     }
 
-    // empty
-    // ie9+
-    // version 0.0.0 2016/05/05
+    /*
+     * empty
+     * ie9+
+     * version 0.0.0 2016/05/05
+     */
     function empty() {
         Array.prototype.forEach.call(elements, function (element, index) {
             element.innerHTML = '';
@@ -118,16 +132,20 @@ var aidJS = function (element) {
         return this;
     }
 
-    // eq
-    // ie8+
-    // version 0.0.0 2016/05/05
+    /*
+     * eq
+     * ie8+
+     * version 0.0.0 2016/05/05
+     */
     function eq(index) {
         return $.$q(elements[index]);;
     }
 
-    // has class
-    // ie8+
-    // version 0.0.0 2016/05/05
+    /*
+     * has class
+     * ie8+
+     * version 0.0.0 2016/05/05
+     */
     function hasClass(className) {
         if (elements[0].classList)
             return elements[0].classList.contains(className);
@@ -135,17 +153,21 @@ var aidJS = function (element) {
             return new RegExp('(^| )' + className + '( |$)', 'gi').test(elements[0].className);
     }
 
-    // hide
-    // ie9+
-    // version 0.0.0 2016/05/05
+    /*
+     * hide
+     * ie9+
+     * version 0.0.0 2016/05/05
+     */    
     function hide() {
         css('display', 'none');
         return this;
     }
 
-    // html
-    // ie9+
-    // version 0.0.0 2016/05/05
+    /*
+     * html
+     * ie9+
+     * version 0.0.0 2016/05/05
+     */ 
     function html(content) {
         if (content) {
             Array.prototype.forEach.call(elements, function (element, index) {
@@ -157,9 +179,11 @@ var aidJS = function (element) {
         return this;
     }
 
-    // remove
-    // ie9+
-    // version 0.0.0 2016/05/05
+    /*
+     * remove
+     * ie9+
+     * version 0.0.0 2016/05/05
+     */
     function remove() {
         Array.prototype.forEach.call(elements, function (element, index) {
             element.parentNode.removeChild(element);
@@ -167,9 +191,11 @@ var aidJS = function (element) {
         return this;
     }
 
-    // remove class
-    // ie8+
-    // version 0.0.0 2016/05/05
+    /*
+     * remove class
+     * ie8+
+     * version 0.0.0 2016/05/05
+     */
     function removeClass(className) {
         if (elements[0].classList) {
             Array.prototype.forEach.call(elements, function (element, index) {
@@ -184,9 +210,11 @@ var aidJS = function (element) {
         return this;
     }
 
-    // remove event listener
-    // ie9+ , chrome1+ , firefox1+ , opera7+, safari1+
-    // version 0.0.0 2016/05/05
+    /*
+     * remove event listener
+     * ie9+ , chrome1+ , firefox1+ , opera7+, safari1+
+     * version 0.0.0 2016/05/05
+     */
     function off(eventName, eventHandler) {
         Array.prototype.forEach.call(elements, function (element, index) {
             element.removeEventListener(eventName, eventHandler);
@@ -194,16 +222,20 @@ var aidJS = function (element) {
         return this;
     }
 
-    // offset
-    // ie9+
-    // version 0.0.0 2016/05/05
+    /*
+     * offset
+     * ie9+
+     * version 0.0.0 2016/05/05
+     */
     function offset() {
         return elements[0].getBoundingClientRect();
     }
 
-    // add event listener
-    // ie9+
-    // version 0.0.0 2016/05/05
+    /*
+     * add event listener
+     * ie9+
+     * version 0.0.0 2016/05/05
+     */
     function on(eventName, eventHandler) {
         Array.prototype.forEach.call(elements, function (element, index) {
             element.addEventListener(eventName, eventHandler);
@@ -211,9 +243,11 @@ var aidJS = function (element) {
         return this;
     }
 
-    // outerWidth
-    // ie9+
-    // version 0.0.0 2016/05/05
+    /*
+     * outerWidth
+     * ie9+
+     * version 0.0.0 2016/05/05
+     */
     function outerHeight(withMargin) {
         if (withMargin) {
             var height = elements[0].offsetHeight;
@@ -225,9 +259,11 @@ var aidJS = function (element) {
         }
     }
 
-    // outerWidth
-    // ie9+
-    // version 0.0.0 2016/05/05
+    /*
+     * outerWidth
+     * ie9+
+     * version 0.0.0 2016/05/     
+     */
     function outerWidth(withMargin) {
         if (withMargin) {
             var width = elements[0].offsetWidth;
@@ -239,16 +275,20 @@ var aidJS = function (element) {
         }
     }
 
-    // parent
-    // ie9+
-    // version 0.0.0 2016/05/05
+    /*
+     * parent
+     * ie9+
+     * version 0.0.0 2016/05/05
+     */ 
     function parent() {
         return elements[0].parentNode;
     }
 
-    // prepend
-    // ie9+
-    // version 0.0.0 2016/05/05
+    /*
+     * prepend
+     * ie9+
+     * version 0.0.0 2016/05/05
+     */
     function prepend(insertElement) {
         Array.prototype.forEach.call(elements, function (element, index) {
             element.insertBefore(insertElement, element.firstChild);
@@ -256,24 +296,30 @@ var aidJS = function (element) {
         return this;
     }
 
-    // scrollTop
-    // ie9+
-    // version 0.0.0 2016/05/05
+    /*
+     * scrollTop
+     * ie9+
+     * version 0.0.0 2016/05/05
+     */
     function scrollTop() {
         return elements[0].scrollTop;
     }
 
-    // show
-    // ie9+
-    // version 0.0.0 2016/05/05
+    /*
+     * show
+     * ie9+
+     * version 0.0.0 2016/05/05
+     */ 
     function show() {
         css('display', '');
         return this;
     }
 
-    // text content
-    // ie9+
-    // version 0.0.0 2016/05/05
+    /*
+     * text content
+     * ie9+
+     * version 0.0.0 2016/05/05
+     */
     function text(content) {
         if (content !== undefined) {
             Array.prototype.forEach.call(elements, function (element, index) {
@@ -314,20 +360,30 @@ var aidJS = function (element) {
 
 aidJS.version = '0.3.0',
 
-// ajax
-// ie9+
-// version 0.0.0 2016/05/05   
+/*
+ * ajax
+ * ie9+, chrome1+, firefox3.5+, opera10.5+, safari4+
+ * version 0.0.1 2016/05/06
+ *  - fixed bug
+ * version 0.0.0 2016/05/05   
+ */
 aidJS.ajax = function (params) {
     params = params || {};
     var request = new XMLHttpRequest();
-    request.open(params.type, params.url, true);
+    request.open(params.method, params.url, true);
+    request.withCredentials = true;
+    request.setRequestHeader('Accept', 'application/json');
+    request.setRequestHeader('Accept', 'text/plain');
+    request.setRequestHeader('Accept', '*/*');
+    request.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+    request.setRequestHeader('Access-Control-Allow-origin', 'true');
     request.onload = function () {
         if (request.status >= 200 && request.status < 400) {
             if (params.success instanceof Function) {
                 params.success(request);
             }
         } else {
-            // We reached our target server, but it returned an error
+            // error
         }
     };
     request.onerror = function () {
@@ -335,12 +391,14 @@ aidJS.ajax = function (params) {
             params.error(request);
         }
     };
-    request.send();
+    request.send(JSON.stringify(params.data));
 };
 
-// browser
-// ie9+
-// version 0.0.0 2016/05/05
+/*
+ * browser
+ * ie9+
+ * version 0.0.0 2016/05/05
+ */
 aidJS.browser = {
     name: null,
     version: null,
@@ -362,12 +420,16 @@ aidJS.browser = {
     }
 };
 
-// log
-// ie8+, chrome1+, firefox4+, opera1+, safari1+
-// version 0.0.0 2016/05/05
+/*
+ * log
+ * ie8+, chrome1+, firefox4+, opera1+, safari1+
+ * version 0.0.0 2016/05/05
+ */
 aidJS.log = function () {
     console.log('---------------', new Date(), '---------------');
     console.log(arguments);
 };
+
+aidJS.browser.init();
 
 window.a = window.aidJS = a = aidJS;
