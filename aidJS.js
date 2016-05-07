@@ -2,13 +2,10 @@
  * aidJS v0.3.1
  * (c) 2016 ITTEN, Inc. http://itten.ir 
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
-<<<<<<< HEAD
  * version 0.4.0 2016/05/07
  *  - add observable first version 
-=======
  * version 0.3.3 2016/05/07
  *  - performance improvemnt in css
->>>>>>> origin/master
  * version 0.3.2 2016/05/07
  *  - fixed bug in return property value in css
  *  - fixed bug in eq
