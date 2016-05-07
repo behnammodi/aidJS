@@ -2,8 +2,13 @@
  * aidJS v0.3.1
  * (c) 2016 ITTEN, Inc. http://itten.ir 
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+<<<<<<< HEAD
  * version 0.4.0 2016/05/07
  *  - add observable first version 
+=======
+ * version 0.3.3 2016/05/07
+ *  - performance improvemnt in css
+>>>>>>> origin/master
  * version 0.3.2 2016/05/07
  *  - fixed bug in return property value in css
  *  - fixed bug in eq
@@ -97,17 +102,19 @@ var aidJS = function (element) {
     }
 
     /*
-     * count
+     * length
      * ie8+
      * version 0.0.0 2016/05/05
      */
-    function count() {
+    function length() {
         return elements.length;
     }
 
     /*
      * style
      * ie9+, chrome5+, firefox4+, opera12+, safari5+
+     * version 0.1.2 2016/05/07 
+     *  - performance improvemnt 
      * version 0.1.1 2016/05/07
      *  - fixed bug in return property value 
      * version 0.1.0 2016/05/05
@@ -115,9 +122,9 @@ var aidJS = function (element) {
      * version 0.0.0 2016/05/05
      */
     function css(property, value) {
-        if (typeof property == 'object' || (typeof property == 'string' && typeof value == 'string')) {
+        if (typeof property === 'object' || (typeof property === 'string' && typeof value === 'string')) {
             Array.prototype.forEach.call(elements, function (element, index) {
-                if (typeof property == 'string') {
+                if (typeof property === 'string') {
                     element.style[property] = value;
                 } else {
                     for (key in property) {
@@ -357,7 +364,7 @@ var aidJS = function (element) {
         addClass: addClass,
         append: append,
         attr: attr,
-        count: count,
+        length: length,
         css: css,
         empty: empty,
         eq: eq,
