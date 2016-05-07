@@ -2,6 +2,8 @@
  * aidJS v0.3.1
  * (c) 2016 ITTEN, Inc. http://itten.ir 
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.4.0 2016/05/07
+ *  - add observable first version 
  * version 0.3.2 2016/05/07
  *  - fixed bug in return property value in css
  *  - fixed bug in eq
@@ -29,8 +31,11 @@ var aidJS = function (element) {
         return false;
     }
 
-    // element
-    var elements = null;
+    /*
+     * element
+     */
+    var elements = null;       
+
     if (element instanceof Object) {
         elements = [element];
     } else {
@@ -219,6 +224,15 @@ var aidJS = function (element) {
     }
 
     /*
+     * observable
+     * ie1
+     * version 0.0.0 2016/05/07
+     */
+    function observable(eventForFire) {
+
+    }
+
+    /*
      * remove event listener
      * ie9+ , chrome1+ , firefox1+ , opera7+, safari1+
      * version 0.0.0 2016/05/05
@@ -246,7 +260,7 @@ var aidJS = function (element) {
      */
     function on(eventName, eventHandler) {
         Array.prototype.forEach.call(elements, function (element, index) {
-            element.addEventListener(eventName, eventHandler);
+            element.addEventListener(eventName, eventHandler, true);
         });
         return this;
     }
@@ -437,6 +451,41 @@ aidJS.log = function () {
     console.log('---------------', new Date(), '---------------');
     console.log(arguments);
 };
+
+/*
+ * observable
+ * ?
+ * version 0.0.0 2016/05/07
+ */
+aidJS.observable = {
+    /*
+     * event repositories
+     * ?
+     * version 0.0.0 2016/05/07
+     */
+    eventRepositories: [],
+    /*
+     * register event repositories
+     * ?
+     * version 0.0.0 2016/05/07
+     */
+    register: function (eventName, handler) {
+        if (!this.eventRepositories[eventName]) {
+            this.eventRepositories[eventName] = [];
+        }
+        this.eventRepositories[eventName].push(handler);
+    },
+    /*
+     * dispatch event repositories
+     * ?
+     * version 0.0.0 2016/05/07
+     */
+    dispatch: function (eventName, params) {
+        this.eventRepositories[eventName].forEach(function (handler) {
+            handler(params);
+        })
+    }
+}
 
 aidJS.browser.init();
 
