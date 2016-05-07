@@ -2,6 +2,9 @@
  * aidJS v0.3.1
  * (c) 2016 ITTEN, Inc. http://itten.ir 
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.3.2 2016/05/07
+ *  - fixed bug in return property value in css
+ *  - fixed bug in eq
  * version 0.3.1 2016/05/06
  *  - fixed bug in a.ajax
  * version 0.3.0 2016/05/06
@@ -13,6 +16,7 @@
  *  - add count in a
  * version 0.0.0 2016/05/05
  */
+
 
 /*
  * select element
@@ -99,23 +103,25 @@ var aidJS = function (element) {
     /*
      * style
      * ie9+, chrome5+, firefox4+, opera12+, safari5+
+     * version 0.1.1 2016/05/07
+     *  - fixed bug in return property value 
      * version 0.1.0 2016/05/05
-     *  - add polyfill propertie arrgument
+     *  - add polyfill property arrgument
      * version 0.0.0 2016/05/05
      */
-    function css(propertie, value) {
-        if (typeof propertie == 'object' || (typeof propertie == 'string' && typeof value == 'string')) {
+    function css(property, value) {
+        if (typeof property == 'object' || (typeof property == 'string' && typeof value == 'string')) {
             Array.prototype.forEach.call(elements, function (element, index) {
-                if (typeof propertie == 'string') {
-                    element.style[propertie] = value;
+                if (typeof property == 'string') {
+                    element.style[property] = value;
                 } else {
-                    for (key in propertie) {
-                        element.style[key] = propertie[key];
+                    for (key in property) {
+                        element.style[key] = property[key];
                     }
                 }
             });
         } else {
-            getComputedStyle(elements[0])[propertie];
+            return getComputedStyle(elements[0])[property];
         }
         return this;
     }
@@ -135,10 +141,12 @@ var aidJS = function (element) {
     /*
      * eq
      * ie8+
+     * version 0.0.1 2016/05/07
+     *  - fixed bug
      * version 0.0.0 2016/05/05
      */
     function eq(index) {
-        return $.$q(elements[index]);;
+        return a(elements[index]);;
     }
 
     /*
