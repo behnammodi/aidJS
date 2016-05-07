@@ -1,4 +1,4 @@
-![aidJS](http://itten.ir/file/aidjslogo.jpg)
+![aidJS](http://itten.ir/file/aidjs-logo.jpg)
 
 aidJS
 
