@@ -2,6 +2,11 @@
  * aidJS v0.3.1
  * (c) 2016 ITTEN, Inc. http://itten.ir 
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.5.0 2016/05/08
+ *  - add find method in a
+ *  - add closest method in a
+ *  - add scrollLeft method in a
+ *  - add value method in a
  * version 0.4.0 2016/05/07
  *  - add observable first version 
  * version 0.3.3 2016/05/07
@@ -27,21 +32,23 @@
  * ie9+
  * version 0.0.0 2016/05/05
  */
-var aidJS = function (element) {
+var aidJS = function (query) {
 
-    if (element === undefined) {
+    if (query === undefined) {
         return false;
     }
 
     /*
      * element
      */
-    var elements = null;       
+    var elements = null;
 
-    if (element instanceof Object) {
-        elements = [element];
+    if (query instanceof Array) {
+        elements = query;
+    } else if (query instanceof Object) {
+        elements = [query];
     } else {
-        elements = document.querySelectorAll(element);
+        elements = document.querySelectorAll(query);
     }
 
     if (elements.length == 0) {
@@ -53,7 +60,7 @@ var aidJS = function (element) {
      * add class
      * ie8+
      * version 0.0.0 2016/05/05
-     */ 
+     */
     function addClass(className) {
         if (elements[0].classList) {
             Array.prototype.forEach.call(elements, function (element, index) {
@@ -74,7 +81,7 @@ var aidJS = function (element) {
      * append
      * ie9+
      * version 0.0.0
-     */  
+     */
     function append(appendElement) {
         Array.prototype.forEach.call(elements, function (element, index) {
             element.appendChild(appendElement);
@@ -106,6 +113,23 @@ var aidJS = function (element) {
     function length() {
         return elements.length;
     }
+
+    /*
+     * closest
+     * ?
+     * version 0.0.0 2016/05/08
+     */
+    function closest(query) {
+        var elementSelector = elements[0];
+        var matchesSelector = elementSelector.matches || elementSelector.webkitMatchesSelector || elementSelector.mozMatchesSelector || elementSelector.msMatchesSelector;
+        while (elementSelector && elementSelector.tagName.toLowerCase() != 'html') {
+            if (matchesSelector.call(elementSelector, query)) {
+                break;
+            }
+            elementSelector = elementSelector.parentNode;
+        }
+        return (elementSelector.tagName.toLowerCase() == 'html') ? null : a(elementSelector);
+    };
 
     /*
      * style
@@ -159,6 +183,21 @@ var aidJS = function (element) {
     }
 
     /*
+     * find
+     * ie8+
+     * version 0.0.0 2016/05/08
+     */
+    function find(query) {
+        var result = [];
+        Array.prototype.forEach.call(elements, function (element, index) {
+            Array.prototype.forEach.call(element.querySelectorAll(query), function (elementTwo, index) {
+                result.push(elementTwo);
+            });
+        });
+        return a(result);
+    }
+
+    /*
      * has class
      * ie8+
      * version 0.0.0 2016/05/05
@@ -174,7 +213,7 @@ var aidJS = function (element) {
      * hide
      * ie9+
      * version 0.0.0 2016/05/05
-     */    
+     */
     function hide() {
         css('display', 'none');
         return this;
@@ -184,7 +223,7 @@ var aidJS = function (element) {
      * html
      * ie9+
      * version 0.0.0 2016/05/05
-     */ 
+     */
     function html(content) {
         if (content) {
             Array.prototype.forEach.call(elements, function (element, index) {
@@ -305,7 +344,7 @@ var aidJS = function (element) {
      * parent
      * ie9+
      * version 0.0.0 2016/05/05
-     */ 
+     */
     function parent() {
         return elements[0].parentNode;
     }
@@ -323,6 +362,16 @@ var aidJS = function (element) {
     }
 
     /*
+     * scrollLeft
+     * ?
+     * version 0.0.0 2016/05/08
+     */
+    function scrollLeft() {
+        return elements[0].scrollLeft;
+    }
+
+
+    /*
      * scrollTop
      * ie9+
      * version 0.0.0 2016/05/05
@@ -335,7 +384,7 @@ var aidJS = function (element) {
      * show
      * ie9+
      * version 0.0.0 2016/05/05
-     */ 
+     */
     function show() {
         css('display', '');
         return this;
@@ -357,14 +406,30 @@ var aidJS = function (element) {
         return this;
     }
 
+    /*
+     * value
+     * ?
+     * version 0.0.0 2016/05/08
+     */
+    function value(value) {
+        if (value === undefined) {
+            return elements[0].value;
+        } else {
+            elements[0].value = value;           
+        }
+        return this;
+    }
+
     return {
         addClass: addClass,
         append: append,
         attr: attr,
         length: length,
+        closest: closest,
         css: css,
         empty: empty,
         eq: eq,
+        find: find,
         hasClass: hasClass,
         hide: hide,
         html: html,
@@ -378,9 +443,11 @@ var aidJS = function (element) {
         outerWidth: outerWidth,
         parent: parent,
         prepend: prepend,
+        scrollLeft: scrollLeft,
         scrollTop: scrollTop,
         show: show,
         text: text,
+        value: value
     };
 }
 
