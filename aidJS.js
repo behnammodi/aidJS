@@ -1,7 +1,15 @@
 ﻿/*
- * aidJS v0.3.1
+ * aidJS v0.6.0
  * (c) 2016 ITTEN, Inc. http://itten.ir 
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.6.0 2016/05/09
+ *  - add elements prop for access pure elements
+ *  - add trigger in a
+ *  - add the string appending feature in append
+ *  - add event delegation feature in on
+ *  - add removeAttr method in a
+ *  - fixed bug set value in attr
+ *  - fixed bug in parent
  * version 0.5.0 2016/05/08
  *  - add find method in a
  *  - add closest method in a
@@ -52,8 +60,8 @@ var aidJS = function (query) {
     }
 
     if (elements.length == 0) {
-        throw 'not found element';
-        return false;
+        console.warn('not found element')
+        return null;
     }
 
     /*
@@ -80,11 +88,18 @@ var aidJS = function (query) {
     /*
      * append
      * ie9+
+     * version 0.1.0
+     *  - added the string appending feature
      * version 0.0.0
      */
-    function append(appendElement) {
+    function append(tobeAppended) {
         Array.prototype.forEach.call(elements, function (element, index) {
-            element.appendChild(appendElement);
+            if (typeof tobeAppended === 'string') {
+                element.innerHTML += tobeAppended;
+            }
+            else {
+                element.appendChild(tobeAppended);
+            }
         });
         return this;
     }
@@ -92,10 +107,12 @@ var aidJS = function (query) {
     /*
      * attribute
      * ie9+
+     * version 0.0.1 2016/05/09
+     *  - fixed bug set value
      * version 0.0.0 2016/05/05
      */
     function attr(attribute, value) {
-        if (value) {
+        if (value !== undefined) {
             Array.prototype.forEach.call(elements, function (element, index) {
                 element.setAttribute(attribute, value);
             });
@@ -248,6 +265,18 @@ var aidJS = function (query) {
     }
 
     /*
+     * removeAttribute
+     * ?
+     * version 0.0.0 2016/05/09
+     */
+    function removeAttr(attribute) {
+        Array.prototype.forEach.call(elements, function (element, index) {
+            element.removeAttribute(attribute);
+        });
+        return this;
+    }
+
+    /*
      * remove class
      * ie8+
      * version 0.0.0 2016/05/05
@@ -299,12 +328,25 @@ var aidJS = function (query) {
     /*
      * add event listener
      * ie9+
+     * version 0.1.0 2016/05/09
+     * - added event delegation feature
      * version 0.0.0 2016/05/05
      */
-    function on(eventName, eventHandler) {
-        Array.prototype.forEach.call(elements, function (element, index) {
-            element.addEventListener(eventName, eventHandler, true);
-        });
+    function on() {
+        var selfArguments = arguments;
+        if (selfArguments.length === 3) {
+            Array.prototype.forEach.call(elements, function (element, index) {
+                element.addEventListener(selfArguments[0], function (event) {
+                    var target = a(event.target).closest(selfArguments[1]);
+                    if (target == null) return false;
+                    selfArguments[2].call(target.elements[0], event);
+                }, true);
+            });
+        } else {
+            Array.prototype.forEach.call(elements, function (element, index) {
+                element.addEventListener(selfArguments[0], selfArguments[1], true);
+            });
+        }
         return this;
     }
 
@@ -343,10 +385,12 @@ var aidJS = function (query) {
     /*
      * parent
      * ie9+
+     * version 0.0.0 2016/05/09
+     *  - fixed bug
      * version 0.0.0 2016/05/05
      */
     function parent() {
-        return elements[0].parentNode;
+        return a(elements[0].parentNode);
     }
 
     /*
@@ -407,6 +451,31 @@ var aidJS = function (query) {
     }
 
     /*
+     * trigger
+     * ie9+
+     * version 0.0.0 2016/05/09
+     */
+    function trigger(eventName) {
+        Array.prototype.forEach.call(elements, function (element, index) {
+            var event
+            if (document.createEvent) {
+                event = document.createEvent("HTMLEvents");
+                event.initEvent(eventName, true, true);
+            } else {
+                event = document.createEventObject();
+                event.eventType = eventName;
+            }
+            event.eventName = eventName;
+            if (document.createEvent) {
+                element.dispatchEvent(event);
+            } else {
+                element.fireEvent("on" + event.eventType, event);
+            }
+        });
+    }
+
+
+    /*
      * value
      * ?
      * version 0.0.0 2016/05/08
@@ -415,7 +484,7 @@ var aidJS = function (query) {
         if (value === undefined) {
             return elements[0].value;
         } else {
-            elements[0].value = value;           
+            elements[0].value = value;
         }
         return this;
     }
@@ -429,11 +498,13 @@ var aidJS = function (query) {
         css: css,
         empty: empty,
         eq: eq,
+        elements: elements,
         find: find,
         hasClass: hasClass,
         hide: hide,
         html: html,
         remove: remove,
+        removeAttr: removeAttr,
         removeClass: removeClass,
         outerHeight: outerHeight,
         outerWidth: outerWidth,
@@ -447,6 +518,7 @@ var aidJS = function (query) {
         scrollTop: scrollTop,
         show: show,
         text: text,
+        trigger: trigger,
         value: value
     };
 }
