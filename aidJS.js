@@ -2,6 +2,8 @@
  * aidJS v0.6.0
  * (c) 2016 ITTEN, Inc. http://itten.ir 
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.6.1 2016/05/10
+ *  - add query in console.warn
  * version 0.6.0 2016/05/09
  *  - add elements prop for access pure elements
  *  - add trigger in a
@@ -60,7 +62,7 @@ var aidJS = function (query) {
     }
 
     if (elements.length == 0) {
-        console.warn('not found element')
+        console.error('aidJS Error:', '0001', 'not found element', query);
         return null;
     }
 
