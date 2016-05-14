@@ -1,7 +1,12 @@
 ﻿/*
  * aidJS v0.6.0
- * (c) 2016 ITTEN, Inc. http://itten.ir 
+ * (c) 2016 ITTEN, Inc. (http://itten.ir) 
+ * aidJS on github (https://github.com/uxitten/aidJS/)
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.7.0 2016/05/14
+ *  - add a.copy method
+ *  - fixed bug
+ *  - remove version attr in a
  * version 0.6.2 2016/05/11
  *  - add aidJS.debug
  *  - fixed bug
@@ -600,6 +605,8 @@ var aidJS = function (query) {
     /*
      * value
      * ?
+     * version 0.0.2 2016/05/14
+     *  - fixed bug in set value
      * version 0.0.1 2016/05/11
      *  - fixed bug
      * version 0.0.0 2016/05/08
@@ -613,7 +620,9 @@ var aidJS = function (query) {
             }
         } else {
             if (elements.length > 0) {
-                elements[0].value = value;
+                Array.prototype.forEach.call(elements, function (element, index) {
+                    element.value = value;
+                });
             }
             return this;
         }
@@ -651,13 +660,13 @@ var aidJS = function (query) {
         trigger: trigger,
         value: value
     };
-}
-
-aidJS.version = '0.3.0',
+};
 
 /*
  * ajax
  * ie9+, chrome1+, firefox3.5+, opera10.5+, safari4+
+ * version 0.0.3 2016/05/14
+ *  - fixed bug in error handling
  * version 0.0.2 2016/05/11
  *  - fixed bug
  * version 0.0.1 2016/05/06
@@ -674,7 +683,9 @@ aidJS.ajax = function (params) {
                 params.success(request);
             }
         } else {
-            // error
+            if (params.error instanceof Function) {
+                params.error(request);
+            }
         }
     };
     request.onerror = function () {
@@ -709,6 +720,15 @@ aidJS.browser = {
         this.name = M[0];
         this.version = M[1];
     }
+};
+
+/*
+ * copy object
+ * ?
+ * version 0.0.0 2016/05/14
+ */
+aidJS.copy = function (obj) {
+    return JSON.parse(JSON.stringify(obj));
 };
 
 /*
