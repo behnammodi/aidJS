@@ -2,6 +2,9 @@
  * aidJS v0.6.0
  * (c) 2016 ITTEN, Inc. http://itten.ir 
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.6.2 2016/05/11
+ *  - add aidJS.debug
+ *  - fixed bug
  * version 0.6.1 2016/05/10
  *  - add query in console.warn
  * version 0.6.0 2016/05/09
@@ -45,7 +48,7 @@
 var aidJS = function (query) {
 
     if (query === undefined) {
-        return false;
+        return undefined;
     }
 
     /*
@@ -62,27 +65,32 @@ var aidJS = function (query) {
     }
 
     if (elements.length == 0) {
-        console.error('aidJS Error:', '0001', 'not found element', query);
-        return null;
+        if (aidJS.debug) {
+            console.error('aidJS Error:', '0001', 'not found element', query);
+        }
     }
 
     /*
      * add class
      * ie8+
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.0 2016/05/05
      */
     function addClass(className) {
-        if (elements[0].classList) {
-            Array.prototype.forEach.call(elements, function (element, index) {
-                className = className.split(' ');
-                className.forEach(function (value) {
-                    element.classList.add(value);
-                })
-            });
-        } else {
-            Array.prototype.forEach.call(elements, function (element, index) {
-                element.className += ' ' + className;
-            });
+        if (elements.length > 0) {
+            if (elements[0].classList) {
+                Array.prototype.forEach.call(elements, function (element, index) {
+                    className = className.split(' ');
+                    className.forEach(function (value) {
+                        element.classList.add(value);
+                    })
+                });
+            } else {
+                Array.prototype.forEach.call(elements, function (element, index) {
+                    element.className += ' ' + className;
+                });
+            }
         }
         return this;
     }
@@ -90,38 +98,50 @@ var aidJS = function (query) {
     /*
      * append
      * ie9+
-     * version 0.1.0
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
+     * version 0.1.0 2016/05/06
      *  - added the string appending feature
-     * version 0.0.0
+     * version 0.0.0 2016/05/05
      */
     function append(tobeAppended) {
-        Array.prototype.forEach.call(elements, function (element, index) {
-            if (typeof tobeAppended === 'string') {
-                element.innerHTML += tobeAppended;
-            }
-            else {
-                element.appendChild(tobeAppended);
-            }
-        });
+        if (elements.length > 0) {
+            Array.prototype.forEach.call(elements, function (element, index) {
+                if (typeof tobeAppended === 'string') {
+                    element.innerHTML += tobeAppended;
+                }
+                else {
+                    element.appendChild(tobeAppended);
+                }
+            });
+        }
         return this;
     }
 
     /*
      * attribute
      * ie9+
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.1 2016/05/09
      *  - fixed bug set value
      * version 0.0.0 2016/05/05
      */
     function attr(attribute, value) {
         if (value !== undefined) {
-            Array.prototype.forEach.call(elements, function (element, index) {
-                element.setAttribute(attribute, value);
-            });
+            if (elements.length > 0) {
+                Array.prototype.forEach.call(elements, function (element, index) {
+                    element.setAttribute(attribute, value);
+                });
+            }
+            return this;
         } else {
-            return elements[0].getAttribute(attribute);
+            if (elements.length > 0) {
+                return elements[0].getAttribute(attribute);
+            } else {
+                return undefined;
+            }
         }
-        return this;
     }
 
     /*
@@ -136,23 +156,32 @@ var aidJS = function (query) {
     /*
      * closest
      * ?
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.0 2016/05/08
      */
     function closest(query) {
-        var elementSelector = elements[0];
-        var matchesSelector = elementSelector.matches || elementSelector.webkitMatchesSelector || elementSelector.mozMatchesSelector || elementSelector.msMatchesSelector;
-        while (elementSelector && elementSelector.tagName.toLowerCase() != 'html') {
-            if (matchesSelector.call(elementSelector, query)) {
-                break;
+        if (elements.length > 0) {
+            var elementSelector = elements[0];
+            var matchesSelector = elementSelector.matches || elementSelector.webkitMatchesSelector || elementSelector.mozMatchesSelector || elementSelector.msMatchesSelector;
+            while (elementSelector && elementSelector.tagName.toLowerCase() != 'html') {
+                if (matchesSelector.call(elementSelector, query)) {
+                    break;
+                }
+                elementSelector = elementSelector.parentNode;
             }
-            elementSelector = elementSelector.parentNode;
+            return (elementSelector.tagName.toLowerCase() == 'html') ? undefined : a(elementSelector);
         }
-        return (elementSelector.tagName.toLowerCase() == 'html') ? null : a(elementSelector);
+        return undefined;
     };
 
     /*
      * style
      * ie9+, chrome5+, firefox4+, opera12+, safari5+
+     * version 0.0.2 2016/05/14
+     *  - fixed bug in value arrg when typeof is number
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.1.2 2016/05/07 
      *  - performance improvemnt 
      * version 0.1.1 2016/05/07
@@ -162,70 +191,95 @@ var aidJS = function (query) {
      * version 0.0.0 2016/05/05
      */
     function css(property, value) {
-        if (typeof property === 'object' || (typeof property === 'string' && typeof value === 'string')) {
-            Array.prototype.forEach.call(elements, function (element, index) {
-                if (typeof property === 'string') {
-                    element.style[property] = value;
-                } else {
-                    for (key in property) {
-                        element.style[key] = property[key];
+        if (typeof property === 'object' || (typeof property === 'string' && (typeof value === 'string' || typeof value === 'number'))) {
+            if (elements.length > 0) {
+                Array.prototype.forEach.call(elements, function (element, index) {
+                    if (typeof property === 'string') {
+                        element.style[property] = value;
+                    } else {
+                        for (key in property) {
+                            element.style[key] = property[key];
+                        }
                     }
-                }
-            });
+                });
+            }
+            return this;
         } else {
-            return getComputedStyle(elements[0])[property];
+            if (elements.length > 0) {
+                return getComputedStyle(elements[0])[property];
+            } else {
+                return undefined;
+            }
         }
-        return this;
+
     }
 
     /*
      * empty
      * ie9+
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.0 2016/05/05
      */
     function empty() {
-        Array.prototype.forEach.call(elements, function (element, index) {
-            element.innerHTML = '';
-        });
+        if (elements.length > 0) {
+            Array.prototype.forEach.call(elements, function (element, index) {
+                element.innerHTML = '';
+            });
+        }
         return this;
     }
 
     /*
      * eq
      * ie8+
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.1 2016/05/07
      *  - fixed bug
      * version 0.0.0 2016/05/05
      */
     function eq(index) {
-        return a(elements[index]);;
+        if (elements.length > 0) {
+            return a(elements[index]);
+        }
+        return this;
     }
 
     /*
      * find
      * ie8+
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.0 2016/05/08
      */
     function find(query) {
         var result = [];
-        Array.prototype.forEach.call(elements, function (element, index) {
-            Array.prototype.forEach.call(element.querySelectorAll(query), function (elementTwo, index) {
-                result.push(elementTwo);
+        if (elements.length > 0) {
+            Array.prototype.forEach.call(elements, function (element, index) {
+                Array.prototype.forEach.call(element.querySelectorAll(query), function (elementTwo, index) {
+                    result.push(elementTwo);
+                });
             });
-        });
+        }
         return a(result);
     }
 
     /*
      * has class
      * ie8+
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.0 2016/05/05
      */
     function hasClass(className) {
-        if (elements[0].classList)
-            return elements[0].classList.contains(className);
-        else
-            return new RegExp('(^| )' + className + '( |$)', 'gi').test(elements[0].className);
+        if (elements.length > 0) {
+            if (elements[0].classList)
+                return elements[0].classList.contains(className);
+            else
+                return new RegExp('(^| )' + className + '( |$)', 'gi').test(elements[0].className);
+        }
+        return undefined;
     }
 
     /*
@@ -241,113 +295,139 @@ var aidJS = function (query) {
     /*
      * html
      * ie9+
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.0 2016/05/05
      */
     function html(content) {
         if (content) {
-            Array.prototype.forEach.call(elements, function (element, index) {
-                element.innerHTML = content;
-            });
+            if (elements.length > 0) {
+                Array.prototype.forEach.call(elements, function (element, index) {
+                    element.innerHTML = content;
+                });
+            }
+            return this;
         } else {
-            return elements[0].innerHTML;
+            if (elements.length > 0) {
+                return elements[0].innerHTML;
+            } else {
+                return undefined;
+            }
         }
-        return this;
+
     }
 
     /*
      * remove
      * ie9+
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.0 2016/05/05
      */
     function remove() {
-        Array.prototype.forEach.call(elements, function (element, index) {
-            element.parentNode.removeChild(element);
-        });
+        if (elements.length > 0) {
+            Array.prototype.forEach.call(elements, function (element, index) {
+                element.parentNode.removeChild(element);
+            });
+        }
         return this;
     }
 
     /*
      * removeAttribute
      * ?
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.0 2016/05/09
      */
     function removeAttr(attribute) {
-        Array.prototype.forEach.call(elements, function (element, index) {
-            element.removeAttribute(attribute);
-        });
+        if (elements.length > 0) {
+            Array.prototype.forEach.call(elements, function (element, index) {
+                element.removeAttribute(attribute);
+            });
+        }
         return this;
     }
 
     /*
      * remove class
      * ie8+
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.0 2016/05/05
      */
     function removeClass(className) {
-        if (elements[0].classList) {
-            Array.prototype.forEach.call(elements, function (element, index) {
-                element.classList.remove(className);
-            });
-        }
-        else {
-            Array.prototype.forEach.call(elements, function (element, index) {
-                element.className = element.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
-            });
+        if (elements.length > 0) {
+            if (elements[0].classList) {
+                Array.prototype.forEach.call(elements, function (element, index) {
+                    element.classList.remove(className);
+                });
+            }
+            else {
+                Array.prototype.forEach.call(elements, function (element, index) {
+                    element.className = element.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+                });
+            }
         }
         return this;
     }
 
     /*
-     * observable
-     * ie1
-     * version 0.0.0 2016/05/07
-     */
-    function observable(eventForFire) {
-
-    }
-
-    /*
      * remove event listener
      * ie9+ , chrome1+ , firefox1+ , opera7+, safari1+
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.0 2016/05/05
      */
     function off(eventName, eventHandler) {
-        Array.prototype.forEach.call(elements, function (element, index) {
-            element.removeEventListener(eventName, eventHandler);
-        });
+        if (elements.length > 0) {
+            Array.prototype.forEach.call(elements, function (element, index) {
+                element.removeEventListener(eventName, eventHandler);
+            });
+        }
         return this;
     }
 
     /*
      * offset
      * ie9+
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.0 2016/05/05
      */
     function offset() {
-        return elements[0].getBoundingClientRect();
+        if (elements.length > 0) {
+            return elements[0].getBoundingClientRect();
+        }
+        return undefined;
     }
 
     /*
      * add event listener
      * ie9+
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.1.0 2016/05/09
      * - added event delegation feature
      * version 0.0.0 2016/05/05
      */
     function on() {
-        var selfArguments = arguments;
-        if (selfArguments.length === 3) {
-            Array.prototype.forEach.call(elements, function (element, index) {
-                element.addEventListener(selfArguments[0], function (event) {
-                    var target = a(event.target).closest(selfArguments[1]);
-                    if (target == null) return false;
-                    selfArguments[2].call(target.elements[0], event);
-                }, true);
-            });
-        } else {
-            Array.prototype.forEach.call(elements, function (element, index) {
-                element.addEventListener(selfArguments[0], selfArguments[1], true);
-            });
+        if (elements.length > 0) {
+            var selfArguments = arguments;
+            if (selfArguments.length === 3) {
+                Array.prototype.forEach.call(elements, function (element, index) {
+                    element.addEventListener(selfArguments[0], function (event) {
+                        var target = a(event.target).closest(selfArguments[1]);
+                        if (target == undefined) return false;
+                        if (target.elements.length === 0) return false;
+                        selfArguments[2].call(target.elements[0], event);
+                    }, true);
+                });
+            } else {
+                Array.prototype.forEach.call(elements, function (element, index) {
+                    element.addEventListener(selfArguments[0], selfArguments[1], true);
+                });
+            }
         }
         return this;
     }
@@ -355,17 +435,22 @@ var aidJS = function (query) {
     /*
      * outerWidth
      * ie9+
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.0 2016/05/05
      */
     function outerHeight(withMargin) {
-        if (withMargin) {
-            var height = elements[0].offsetHeight;
-            var style = getComputedStyle(elements[0]);
-            height += parseInt(style.marginTop) + parseInt(style.marginBottom);
-            return height;
-        } else {
-            return elements[0].offsetHeight
+        if (elements.length > 0) {
+            if (withMargin) {
+                var height = elements[0].offsetHeight;
+                var style = getComputedStyle(elements[0]);
+                height += parseInt(style.marginTop) + parseInt(style.marginBottom);
+                return height;
+            } else {
+                return elements[0].offsetHeight
+            }
         }
+        return undefined;
     }
 
     /*
@@ -374,56 +459,78 @@ var aidJS = function (query) {
      * version 0.0.0 2016/05/     
      */
     function outerWidth(withMargin) {
-        if (withMargin) {
-            var width = elements[0].offsetWidth;
-            var style = getComputedStyle(elements[0]);
-            width += parseInt(style.marginLeft) + parseInt(style.marginRight);
-            return width;
-        } else {
-            return elements[0].offsetWidth
+        if (elements.length > 0) {
+            if (withMargin) {
+                var width = elements[0].offsetWidth;
+                var style = getComputedStyle(elements[0]);
+                width += parseInt(style.marginLeft) + parseInt(style.marginRight);
+                return width;
+            } else {
+                return elements[0].offsetWidth
+            }
         }
+        return undefined;
     }
 
     /*
      * parent
      * ie9+
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.0 2016/05/09
      *  - fixed bug
      * version 0.0.0 2016/05/05
      */
     function parent() {
-        return a(elements[0].parentNode);
+        if (elements.length > 0) {
+            return a(elements[0].parentNode);
+        }
+        return this;
     }
 
     /*
      * prepend
      * ie9+
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.0 2016/05/05
      */
     function prepend(insertElement) {
-        Array.prototype.forEach.call(elements, function (element, index) {
-            element.insertBefore(insertElement, element.firstChild);
-        });
+        if (elements.length > 0) {
+            Array.prototype.forEach.call(elements, function (element, index) {
+                element.insertBefore(insertElement, element.firstChild);
+            });
+        }
         return this;
     }
 
     /*
      * scrollLeft
      * ?
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.0 2016/05/08
      */
     function scrollLeft() {
-        return elements[0].scrollLeft;
+        if (elements.length > 0) {
+            return elements[0].scrollLeft;
+        }
+        return undefined;
     }
 
 
     /*
      * scrollTop
      * ie9+
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.0 2016/05/05
      */
     function scrollTop() {
-        return elements[0].scrollTop;
+        if (elements.length > 0) {
+            return elements[0].scrollTop;
+        }
+        return undefined;
     }
 
     /*
@@ -439,56 +546,77 @@ var aidJS = function (query) {
     /*
      * text content
      * ie9+
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.0 2016/05/05
      */
     function text(content) {
         if (content !== undefined) {
-            Array.prototype.forEach.call(elements, function (element, index) {
-                element.textContent = content;
-            });
+            if (elements.length > 0) {
+                Array.prototype.forEach.call(elements, function (element, index) {
+                    element.textContent = content;
+                });
+            }
+            return this;
         } else {
-            return elements[0].textContent;
+            if (elements.length > 0) {
+                return elements[0].textContent;
+            } else {
+                return undefined;
+            }
         }
-        return this;
     }
 
     /*
      * trigger
      * ie9+
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.0 2016/05/09
      */
     function trigger(eventName) {
-        Array.prototype.forEach.call(elements, function (element, index) {
-            var event
-            if (document.createEvent) {
-                event = document.createEvent("HTMLEvents");
-                event.initEvent(eventName, true, true);
-            } else {
-                event = document.createEventObject();
-                event.eventType = eventName;
-            }
-            event.eventName = eventName;
-            if (document.createEvent) {
-                element.dispatchEvent(event);
-            } else {
-                element.fireEvent("on" + event.eventType, event);
-            }
-        });
+        if (elements.length > 0) {
+            Array.prototype.forEach.call(elements, function (element, index) {
+                var event
+                if (document.createEvent) {
+                    event = document.createEvent("HTMLEvents");
+                    event.initEvent(eventName, true, true);
+                } else {
+                    event = document.createEventObject();
+                    event.eventType = eventName;
+                }
+                event.eventName = eventName;
+                if (document.createEvent) {
+                    element.dispatchEvent(event);
+                } else {
+                    element.fireEvent("on" + event.eventType, event);
+                }
+            });
+        }
+        return undefined;
     }
 
 
     /*
      * value
      * ?
+     * version 0.0.1 2016/05/11
+     *  - fixed bug
      * version 0.0.0 2016/05/08
      */
     function value(value) {
         if (value === undefined) {
-            return elements[0].value;
+            if (elements.length > 0) {
+                return elements[0].value;
+            } else {
+                return undefined;
+            }
         } else {
-            elements[0].value = value;
+            if (elements.length > 0) {
+                elements[0].value = value;
+            }
+            return this;
         }
-        return this;
     }
 
     return {
@@ -530,6 +658,8 @@ aidJS.version = '0.3.0',
 /*
  * ajax
  * ie9+, chrome1+, firefox3.5+, opera10.5+, safari4+
+ * version 0.0.2 2016/05/11
+ *  - fixed bug
  * version 0.0.1 2016/05/06
  *  - fixed bug
  * version 0.0.0 2016/05/05   
@@ -538,12 +668,6 @@ aidJS.ajax = function (params) {
     params = params || {};
     var request = new XMLHttpRequest();
     request.open(params.method, params.url, true);
-    request.withCredentials = true;
-    request.setRequestHeader('Accept', 'application/json');
-    request.setRequestHeader('Accept', 'text/plain');
-    request.setRequestHeader('Accept', '*/*');
-    request.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-    request.setRequestHeader('Access-Control-Allow-origin', 'true');
     request.onload = function () {
         if (request.status >= 200 && request.status < 400) {
             if (params.success instanceof Function) {
@@ -588,13 +712,22 @@ aidJS.browser = {
 };
 
 /*
+ * for debug mode
+ * ?
+ * version 0.0.0 206/05/11
+ */
+aidJS.debug = true;
+
+/*
  * log
  * ie8+, chrome1+, firefox4+, opera1+, safari1+
  * version 0.0.0 2016/05/05
  */
 aidJS.log = function () {
-    console.log('---------------', new Date(), '---------------');
-    console.log(arguments);
+    if (aidJS.debug) {
+        console.log('---------------', new Date(), '---------------');
+        console.log(arguments);
+    }
 };
 
 /*
