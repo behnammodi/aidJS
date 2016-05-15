@@ -3,6 +3,9 @@
  * (c) 2016 ITTEN, Inc. (http://itten.ir) 
  * aidJS on github (https://github.com/uxitten/aidJS/)
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.8.0 2016/05/15
+ *  - add complete handler in ajax
+ *  - add queryString feature
  * version 0.7.0 2016/05/14
  *  - add a.copy method
  *  - fixed bug
@@ -665,6 +668,8 @@ var aidJS = function (query) {
 /*
  * ajax
  * ie9+, chrome1+, firefox3.5+, opera10.5+, safari4+
+ * version 0.1.0 2016/05/15
+ *  - add complete handler
  * version 0.0.3 2016/05/14
  *  - fixed bug in error handling
  * version 0.0.2 2016/05/11
@@ -682,15 +687,24 @@ aidJS.ajax = function (params) {
             if (params.success instanceof Function) {
                 params.success(request);
             }
+            if (params.complete instanceof Function) {
+                params.complete(request);
+            }
         } else {
             if (params.error instanceof Function) {
                 params.error(request);
+            }
+            if (params.complete instanceof Function) {
+                params.complete(request);
             }
         }
     };
     request.onerror = function () {
         if (params.error instanceof Function) {
             params.error(request);
+        }
+        if (params.complete instanceof Function) {
+            params.complete(request);
         }
     };
     request.send(JSON.stringify(params.data));
@@ -782,6 +796,44 @@ aidJS.observable = {
         this.eventRepositories[eventName].forEach(function (handler) {
             handler(params);
         })
+    }
+}
+
+/*
+ * queryString
+ * ?
+ * version 0.0.0 2016/05/15
+ */
+aidJS.queryString = {
+    /*
+     * set key value
+     * ?
+     * version 0.0.0 2016/05/15
+     */
+    set: function (key, value) {
+        var _search = location.search;
+        var _reg = new RegExp("([?&])" + key + "=[^&#]*", "i");
+        if (_reg.test(_search)) {
+            _search = _search.replace(_reg, '$1' + key + "=" + value);
+        } else {
+            var _separator = /\?/.test(_search) ? "&" : "?";
+            _search = _search + _separator + key + "=" + value;
+        }
+        history.pushState(null, null, _search);
+    },
+    /*
+     * get with key
+     * ?
+     * version 0.0.0 2016/05/15
+     */
+    get: function (key) {
+        var url = window.location.href;
+        key = key.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + key + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
 }
 
