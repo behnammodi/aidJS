@@ -1,8 +1,14 @@
 ﻿/*
- * aidJS v0.6.0
+ * aidJS v0.8.1
  * (c) 2016 ITTEN, Inc. (http://itten.ir) 
  * aidJS on github (https://github.com/uxitten/aidJS/)
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.8.1 2016/05/18
+ *  - add data to state in methos set querystring
+ *  - add index method
+ *  - value method now work with input type checkbox
+ *  - add clean method in queryString
+ *  - overwrite set in queryString
  * version 0.8.0 2016/05/15
  *  - add complete handler in ajax
  *  - add queryString feature
@@ -271,6 +277,18 @@ var aidJS = function (query) {
             });
         }
         return a(result);
+    }
+
+    /*
+     * index 
+     * ?
+     * version 0.0.0 2016/05/17
+     */
+    function index() {
+        if (elements.length > 0) {
+            return Array.prototype.indexOf.call(elements[0].parentNode.children, elements[0]);
+        }
+        return undefined;
     }
 
     /*
@@ -608,6 +626,8 @@ var aidJS = function (query) {
     /*
      * value
      * ?
+     * version 0.1.0 2016/05/17
+     *  - now work with input type checkbox
      * version 0.0.2 2016/05/14
      *  - fixed bug in set value
      * version 0.0.1 2016/05/11
@@ -617,14 +637,26 @@ var aidJS = function (query) {
     function value(value) {
         if (value === undefined) {
             if (elements.length > 0) {
-                return elements[0].value;
+                if (elements[0].tagName.toLowerCase() === 'input'
+                    &&
+                    elements[0].type.toLowerCase() === 'checkbox') {
+                    return elements[0].checked;
+                } else {
+                    return elements[0].value;
+                }
             } else {
                 return undefined;
             }
         } else {
             if (elements.length > 0) {
                 Array.prototype.forEach.call(elements, function (element, index) {
-                    element.value = value;
+                    if (element.tagName.toLowerCase() === 'input'
+                    &&
+                    element.type.toLowerCase() === 'checkbox') {
+                        element.checked = value;
+                    } else {
+                        element.value = value;
+                    }
                 });
             }
             return this;
@@ -642,6 +674,7 @@ var aidJS = function (query) {
         eq: eq,
         elements: elements,
         find: find,
+        index: index,
         hasClass: hasClass,
         hide: hide,
         html: html,
@@ -806,20 +839,38 @@ aidJS.observable = {
  */
 aidJS.queryString = {
     /*
+     * clean query string
+     */
+    clean: function () {
+        var _uri = location.toString();
+        if (_uri.indexOf("?") > 0) {
+            var _cleanUri = _uri.substring(0, _uri.indexOf("?"));
+            history.replaceState(null, null, _cleanUri);
+        }
+    },
+    /*
      * set key value
      * ?
+     * version 0.1.0 2016/05/18
+     *  - add data to state
+     * version 0.0.1 2016/05/17
+     *  - overwrite arrg
      * version 0.0.0 2016/05/15
      */
-    set: function (key, value) {
-        var _search = location.search;
-        var _reg = new RegExp("([?&])" + key + "=[^&#]*", "i");
-        if (_reg.test(_search)) {
-            _search = _search.replace(_reg, '$1' + key + "=" + value);
+    set: function (key, value, data) {
+        if (value === undefined) {
+            history.pushState(data, null, key);
         } else {
-            var _separator = /\?/.test(_search) ? "&" : "?";
-            _search = _search + _separator + key + "=" + value;
+            var _search = location.search;
+            var _reg = new RegExp("([?&])" + key + "=[^&#]*", "i");
+            if (_reg.test(_search)) {
+                _search = _search.replace(_reg, '$1' + key + "=" + value);
+            } else {
+                var _separator = /\?/.test(_search) ? "&" : "?";
+                _search = _search + _separator + key + "=" + value;
+            }
+            history.pushState(data, null, _search);
         }
-        history.pushState(null, null, _search);
     },
     /*
      * get with key
