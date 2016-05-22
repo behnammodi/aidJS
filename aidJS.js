@@ -3,6 +3,8 @@
  * (c) 2016 ITTEN, Inc. (http://itten.ir) 
  * aidJS on github (https://github.com/uxitten/aidJS/)
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.8.3 2016/05/22
+ *  - remove observable 
  * version 0.8.2 2016/05/22
  *  - fixed bug in addClass
  * version 0.8.1 2016/05/18
@@ -800,41 +802,6 @@ aidJS.log = function () {
         console.log(arguments);
     }
 };
-
-/*
- * observable
- * ?
- * version 0.0.0 2016/05/07
- */
-aidJS.observable = {
-    /*
-     * event repositories
-     * ?
-     * version 0.0.0 2016/05/07
-     */
-    eventRepositories: [],
-    /*
-     * register event repositories
-     * ?
-     * version 0.0.0 2016/05/07
-     */
-    register: function (eventName, handler) {
-        if (!this.eventRepositories[eventName]) {
-            this.eventRepositories[eventName] = [];
-        }
-        this.eventRepositories[eventName].push(handler);
-    },
-    /*
-     * dispatch event repositories
-     * ?
-     * version 0.0.0 2016/05/07
-     */
-    dispatch: function (eventName, params) {
-        this.eventRepositories[eventName].forEach(function (handler) {
-            handler(params);
-        })
-    }
-}
 
 /*
  * queryString
