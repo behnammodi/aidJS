@@ -3,6 +3,8 @@
  * (c) 2016 ITTEN, Inc. (http://itten.ir) 
  * aidJS on github (https://github.com/uxitten/aidJS/)
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.8.2 2016/05/22
+ *  - fixed bug in addClass
  * version 0.8.1 2016/05/18
  *  - add data to state in methos set querystring
  *  - add index method
@@ -87,6 +89,8 @@ var aidJS = function (query) {
     /*
      * add class
      * ie8+
+     * version 0.0.2 2016/05/22
+     *  - fixed bug
      * version 0.0.1 2016/05/11
      *  - fixed bug
      * version 0.0.0 2016/05/05
@@ -94,8 +98,8 @@ var aidJS = function (query) {
     function addClass(className) {
         if (elements.length > 0) {
             if (elements[0].classList) {
-                Array.prototype.forEach.call(elements, function (element, index) {
-                    className = className.split(' ');
+                className = className.split(' ');
+                Array.prototype.forEach.call(elements, function (element, index) {                   
                     className.forEach(function (value) {
                         element.classList.add(value);
                     })
