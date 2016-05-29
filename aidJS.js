@@ -1,8 +1,10 @@
 ﻿/*
- * aidJS v0.8.1
+ * aidJS v0.8.4
  * (c) 2016 ITTEN, Inc. (http://itten.ir) 
  * aidJS on github (https://github.com/uxitten/aidJS/)
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.8.4 2016/05/29
+ *  - fixed bug in on and off method
  * version 0.8.3 2016/05/22
  *  - remove observable 
  * version 0.8.2 2016/05/22
@@ -101,7 +103,7 @@ var aidJS = function (query) {
         if (elements.length > 0) {
             if (elements[0].classList) {
                 className = className.split(' ');
-                Array.prototype.forEach.call(elements, function (element, index) {                   
+                Array.prototype.forEach.call(elements, function (element, index) {
                     className.forEach(function (value) {
                         element.classList.add(value);
                     })
@@ -407,14 +409,16 @@ var aidJS = function (query) {
     /*
      * remove event listener
      * ie9+ , chrome1+ , firefox1+ , opera7+, safari1+
+     * version 0.0.2 2016/05/29
+     *  - fixed bug
      * version 0.0.1 2016/05/11
      *  - fixed bug
      * version 0.0.0 2016/05/05
      */
-    function off(eventName, eventHandler) {
+    function off(eventName, eventHandler) {      
         if (elements.length > 0) {
             Array.prototype.forEach.call(elements, function (element, index) {
-                element.removeEventListener(eventName, eventHandler);
+                element.removeEventListener(eventName, eventHandler, false);
             });
         }
         return this;
@@ -437,13 +441,15 @@ var aidJS = function (query) {
     /*
      * add event listener
      * ie9+
-     * version 0.0.1 2016/05/11
+     * version 0.1.2 2016/05/29
+     *  - fixed bug
+     * version 0.1.1 2016/05/11
      *  - fixed bug
      * version 0.1.0 2016/05/09
      * - added event delegation feature
      * version 0.0.0 2016/05/05
      */
-    function on() {
+    function on() {      
         if (elements.length > 0) {
             var selfArguments = arguments;
             if (selfArguments.length === 3) {
@@ -453,11 +459,11 @@ var aidJS = function (query) {
                         if (target == undefined) return false;
                         if (target.elements.length === 0) return false;
                         selfArguments[2].call(target.elements[0], event);
-                    }, true);
+                    }, false);
                 });
             } else {
                 Array.prototype.forEach.call(elements, function (element, index) {
-                    element.addEventListener(selfArguments[0], selfArguments[1], true);
+                    element.addEventListener(selfArguments[0], selfArguments[1], false);
                 });
             }
         }
