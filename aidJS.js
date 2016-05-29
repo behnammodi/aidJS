@@ -3,6 +3,8 @@
  * (c) 2016 ITTEN, Inc. (http://itten.ir) 
  * aidJS on github (https://github.com/uxitten/aidJS/)
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.9.0 2016/05/29
+ *  - add return XMLHttpRequest in ajax method
  * version 0.8.4 2016/05/29
  *  - fixed bug in on and off method
  * version 0.8.3 2016/05/22
@@ -415,7 +417,7 @@ var aidJS = function (query) {
      *  - fixed bug
      * version 0.0.0 2016/05/05
      */
-    function off(eventName, eventHandler) {      
+    function off(eventName, eventHandler) {
         if (elements.length > 0) {
             Array.prototype.forEach.call(elements, function (element, index) {
                 element.removeEventListener(eventName, eventHandler, false);
@@ -449,7 +451,7 @@ var aidJS = function (query) {
      * - added event delegation feature
      * version 0.0.0 2016/05/05
      */
-    function on() {      
+    function on() {
         if (elements.length > 0) {
             var selfArguments = arguments;
             if (selfArguments.length === 3) {
@@ -713,6 +715,8 @@ var aidJS = function (query) {
 /*
  * ajax
  * ie9+, chrome1+, firefox3.5+, opera10.5+, safari4+
+ * version 0.2.0 2016/05/29
+ *  - add return XMLHttpRequest object for abort ...
  * version 0.1.0 2016/05/15
  *  - add complete handler
  * version 0.0.3 2016/05/14
@@ -753,6 +757,7 @@ aidJS.ajax = function (params) {
         }
     };
     request.send(JSON.stringify(params.data));
+    return request;
 };
 
 /*
