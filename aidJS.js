@@ -1,8 +1,10 @@
 ﻿/*
- * aidJS v0.8.4
+ * aidJS v0.10.0
  * (c) 2016 ITTEN, Inc. (http://itten.ir) 
  * aidJS on github (https://github.com/uxitten/aidJS/)
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.10.0 2016/06/01
+ *  - add headers arrg in ajax
  * version 0.9.0 2016/05/29
  *  - add return XMLHttpRequest in ajax method
  * version 0.8.4 2016/05/29
@@ -715,6 +717,8 @@ var aidJS = function (query) {
 /*
  * ajax
  * ie9+, chrome1+, firefox3.5+, opera10.5+, safari4+
+ * version 0.3.0 2016/06/01
+ *  - add headers arrg
  * version 0.2.0 2016/05/29
  *  - add return XMLHttpRequest object for abort ...
  * version 0.1.0 2016/05/15
@@ -731,6 +735,10 @@ aidJS.ajax = function (params) {
     params = params || {};
     var request = new XMLHttpRequest();
     request.open(params.method, params.url, true);
+    params.headers = params.headers || [];
+    params.headers.forEach(function (header) {
+        request.setRequestHeader(header.key, header.value);
+    });
     request.onload = function () {
         if (request.status >= 200 && request.status < 400) {
             if (params.success instanceof Function) {
