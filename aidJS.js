@@ -4,7 +4,7 @@
  * aidJS on github (https://github.com/uxitten/aidJS/)
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
  * version 0.11.0 2016/06/24
- *  - add bubbling arrgument in method "on"
+ *  - add bubbling argument in method "on"
  * version 0.10.0 2016/06/01
  *  - add headers arrg in ajax
  * version 0.9.0 2016/05/29
