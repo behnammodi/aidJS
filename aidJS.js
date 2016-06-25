@@ -1,8 +1,10 @@
-﻿/*
- * aidJS v0.10.0
+/*
+ * aidJS v0.11.0
  * (c) 2016 ITTEN, Inc. (http://itten.ir) 
  * aidJS on github (https://github.com/uxitten/aidJS/)
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.11.0 2016/06/24
+ *  - add bubbling arrgument in method "on"
  * version 0.10.0 2016/06/01
  *  - add headers arrg in ajax
  * version 0.9.0 2016/05/29
@@ -445,6 +447,8 @@ var aidJS = function (query) {
     /*
      * add event listener
      * ie9+
+     * version 0.2.0 2016/06/24
+     *  - add bubbling arrgument
      * version 0.1.2 2016/05/29
      *  - fixed bug
      * version 0.1.1 2016/05/11
@@ -456,18 +460,23 @@ var aidJS = function (query) {
     function on() {
         if (elements.length > 0) {
             var selfArguments = arguments;
-            if (selfArguments.length === 3) {
+            if(
+                typeof(selfArguments[1])==='string'
+            ){
                 Array.prototype.forEach.call(elements, function (element, index) {
                     element.addEventListener(selfArguments[0], function (event) {
                         var target = a(event.target).closest(selfArguments[1]);
                         if (target == undefined) return false;
                         if (target.elements.length === 0) return false;
                         selfArguments[2].call(target.elements[0], event);
-                    }, false);
+                    }, selfArguments[2] || false);
                 });
-            } else {
+            }else{
                 Array.prototype.forEach.call(elements, function (element, index) {
-                    element.addEventListener(selfArguments[0], selfArguments[1], false);
+                    element.addEventListener(
+                        selfArguments[0],
+                        selfArguments[1],
+                        selfArguments[2] || false);
                 });
             }
         }
