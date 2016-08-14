@@ -1,10 +1,12 @@
 /*
- * aidJS v0.11.0
+ * aidJS v0.10.0
  * (c) 2016 ITTEN, Inc. (http://itten.ir) 
  * aidJS on github (https://github.com/uxitten/aidJS/)
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
- * version 0.11.0 2016/06/24
- *  - add bubbling argument in method "on"
+ * version 0.11.0 2016/08/14
+ *  - add a.copy for copy object
+ *  - add clean and remove function in a.queryString
+ *  - add a.ready
  * version 0.10.0 2016/06/01
  *  - add headers arrg in ajax
  * version 0.9.0 2016/05/29
@@ -136,7 +138,7 @@ var aidJS = function (query) {
         if (elements.length > 0) {
             Array.prototype.forEach.call(elements, function (element, index) {
                 if (typeof tobeAppended === 'string') {
-                    element.innerHTML += tobeAppended;
+                    element.insertAdjacentHTML('beforeend', tobeAppended);
                 }
                 else {
                     element.appendChild(tobeAppended);
@@ -447,8 +449,6 @@ var aidJS = function (query) {
     /*
      * add event listener
      * ie9+
-     * version 0.2.0 2016/06/24
-     *  - add bubbling arrgument
      * version 0.1.2 2016/05/29
      *  - fixed bug
      * version 0.1.1 2016/05/11
@@ -460,23 +460,18 @@ var aidJS = function (query) {
     function on() {
         if (elements.length > 0) {
             var selfArguments = arguments;
-            if(
-                typeof(selfArguments[1])==='string'
-            ){
+            if (selfArguments.length === 3) {
                 Array.prototype.forEach.call(elements, function (element, index) {
                     element.addEventListener(selfArguments[0], function (event) {
                         var target = a(event.target).closest(selfArguments[1]);
                         if (target == undefined) return false;
                         if (target.elements.length === 0) return false;
                         selfArguments[2].call(target.elements[0], event);
-                    }, selfArguments[2] || false);
+                    }, false);
                 });
-            }else{
+            } else {
                 Array.prototype.forEach.call(elements, function (element, index) {
-                    element.addEventListener(
-                        selfArguments[0],
-                        selfArguments[1],
-                        selfArguments[2] || false);
+                    element.addEventListener(selfArguments[0], selfArguments[1], false);
                 });
             }
         }
@@ -884,6 +879,41 @@ aidJS.queryString = {
         if (!results) return null;
         if (!results[2]) return '';
         return decodeURIComponent(results[2].replace(/\+/g, " "));
+    },
+    /*
+     * remove from query string
+     */
+    remove: function (key) {
+        var uri = location.search.replace('?', '').toString().split('&'),
+            tobeRemoved = [];
+        for (var i = 0, uriLength = uri.length; i < uriLength; i++) {
+            if (uri[i].indexOf(key) > -1) {
+                uri.splice(i, 1);
+                i--;
+                uriLength--;
+            }
+        } 
+        history.replaceState(null, null, location.origin + location.pathname + '?' + uri.join('&'));
+    }
+}
+
+/*
+ * document ready
+ */
+aidJS.ready = function () {
+    var arg = arguments,
+        func = arg[0];
+    document.addEventListener("DOMContentLoaded", function (event) {
+        aidJS.ready.fired = true;
+        var arg2 = Array.prototype.slice.call(arg);
+        arg2.shift();
+        func.apply(this, arg2);
+        return;
+    });
+    if (aidJS.ready.fired) {
+        var arg2 = Array.prototype.slice.call(arg);
+        arg2.shift();
+        func.apply(this, arg2);
     }
 }
 
