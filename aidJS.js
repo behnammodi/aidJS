@@ -1,9 +1,12 @@
 /*
- * aidJS v0.10.0
+ * aidJS v0.11.0
  * (c) 2016 ITTEN, Inc. (http://itten.ir) 
  * aidJS on github (https://github.com/uxitten/aidJS/)
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
- * version 0.11.0 2016/08/14
+ * version 0.12.0 2016/10/15
+ *  - add shortcut for Array.prototype.forEach.call
+ *  - fixed bug in html function
+ * version 0.11.0 2016/08/14 
  *  - add a.copy for copy object
  *  - add clean and remove function in a.queryString
  *  - add a.ready
@@ -99,6 +102,14 @@ var aidJS = function (query) {
     }
 
     /*
+     * array prototype forEach
+     * version 0.0.1 2016/10/15
+     */
+    function forEach(iterator, func) {
+        return Array.prototype.forEach.call(iterator, func);
+    }   
+
+    /*
      * add class
      * ie8+
      * version 0.0.2 2016/05/22
@@ -111,13 +122,13 @@ var aidJS = function (query) {
         if (elements.length > 0) {
             if (elements[0].classList) {
                 className = className.split(' ');
-                Array.prototype.forEach.call(elements, function (element, index) {
+               forEach(elements, function (element, index) {
                     className.forEach(function (value) {
                         element.classList.add(value);
                     })
                 });
             } else {
-                Array.prototype.forEach.call(elements, function (element, index) {
+               forEach(elements, function (element, index) {
                     element.className += ' ' + className;
                 });
             }
@@ -136,7 +147,7 @@ var aidJS = function (query) {
      */
     function append(tobeAppended) {
         if (elements.length > 0) {
-            Array.prototype.forEach.call(elements, function (element, index) {
+           forEach(elements, function (element, index) {
                 if (typeof tobeAppended === 'string') {
                     element.insertAdjacentHTML('beforeend', tobeAppended);
                 }
@@ -160,7 +171,7 @@ var aidJS = function (query) {
     function attr(attribute, value) {
         if (value !== undefined) {
             if (elements.length > 0) {
-                Array.prototype.forEach.call(elements, function (element, index) {
+               forEach(elements, function (element, index) {
                     element.setAttribute(attribute, value);
                 });
             }
@@ -223,7 +234,7 @@ var aidJS = function (query) {
     function css(property, value) {
         if (typeof property === 'object' || (typeof property === 'string' && (typeof value === 'string' || typeof value === 'number'))) {
             if (elements.length > 0) {
-                Array.prototype.forEach.call(elements, function (element, index) {
+               forEach(elements, function (element, index) {
                     if (typeof property === 'string') {
                         element.style[property] = value;
                     } else {
@@ -253,7 +264,7 @@ var aidJS = function (query) {
      */
     function empty() {
         if (elements.length > 0) {
-            Array.prototype.forEach.call(elements, function (element, index) {
+           forEach(elements, function (element, index) {
                 element.innerHTML = '';
             });
         }
@@ -286,8 +297,8 @@ var aidJS = function (query) {
     function find(query) {
         var result = [];
         if (elements.length > 0) {
-            Array.prototype.forEach.call(elements, function (element, index) {
-                Array.prototype.forEach.call(element.querySelectorAll(query), function (elementTwo, index) {
+           forEach(elements, function (element, index) {
+               forEach(element.querySelectorAll(query), function (elementTwo, index) {
                     result.push(elementTwo);
                 });
             });
@@ -337,14 +348,16 @@ var aidJS = function (query) {
     /*
      * html
      * ie9+
+     * version 0.0.2 2016/10/15
+     *  - fixed bug
      * version 0.0.1 2016/05/11
      *  - fixed bug
      * version 0.0.0 2016/05/05
      */
     function html(content) {
-        if (content) {
+        if (content!==undefined) {
             if (elements.length > 0) {
-                Array.prototype.forEach.call(elements, function (element, index) {
+               forEach(elements, function (element, index) {
                     element.innerHTML = content;
                 });
             }
@@ -368,7 +381,7 @@ var aidJS = function (query) {
      */
     function remove() {
         if (elements.length > 0) {
-            Array.prototype.forEach.call(elements, function (element, index) {
+           forEach(elements, function (element, index) {
                 element.parentNode.removeChild(element);
             });
         }
@@ -384,7 +397,7 @@ var aidJS = function (query) {
      */
     function removeAttr(attribute) {
         if (elements.length > 0) {
-            Array.prototype.forEach.call(elements, function (element, index) {
+           forEach(elements, function (element, index) {
                 element.removeAttribute(attribute);
             });
         }
@@ -401,12 +414,12 @@ var aidJS = function (query) {
     function removeClass(className) {
         if (elements.length > 0) {
             if (elements[0].classList) {
-                Array.prototype.forEach.call(elements, function (element, index) {
+               forEach(elements, function (element, index) {
                     element.classList.remove(className);
                 });
             }
             else {
-                Array.prototype.forEach.call(elements, function (element, index) {
+               forEach(elements, function (element, index) {
                     element.className = element.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
                 });
             }
@@ -425,7 +438,7 @@ var aidJS = function (query) {
      */
     function off(eventName, eventHandler) {
         if (elements.length > 0) {
-            Array.prototype.forEach.call(elements, function (element, index) {
+           forEach(elements, function (element, index) {
                 element.removeEventListener(eventName, eventHandler, false);
             });
         }
@@ -461,7 +474,7 @@ var aidJS = function (query) {
         if (elements.length > 0) {
             var selfArguments = arguments;
             if (selfArguments.length === 3) {
-                Array.prototype.forEach.call(elements, function (element, index) {
+               forEach(elements, function (element, index) {
                     element.addEventListener(selfArguments[0], function (event) {
                         var target = a(event.target).closest(selfArguments[1]);
                         if (target == undefined) return false;
@@ -470,7 +483,7 @@ var aidJS = function (query) {
                     }, false);
                 });
             } else {
-                Array.prototype.forEach.call(elements, function (element, index) {
+               forEach(elements, function (element, index) {
                     element.addEventListener(selfArguments[0], selfArguments[1], false);
                 });
             }
@@ -543,7 +556,7 @@ var aidJS = function (query) {
      */
     function prepend(insertElement) {
         if (elements.length > 0) {
-            Array.prototype.forEach.call(elements, function (element, index) {
+           forEach(elements, function (element, index) {
                 element.insertBefore(insertElement, element.firstChild);
             });
         }
@@ -599,7 +612,7 @@ var aidJS = function (query) {
     function text(content) {
         if (content !== undefined) {
             if (elements.length > 0) {
-                Array.prototype.forEach.call(elements, function (element, index) {
+               forEach(elements, function (element, index) {
                     element.textContent = content;
                 });
             }
@@ -622,7 +635,7 @@ var aidJS = function (query) {
      */
     function trigger(eventName) {
         if (elements.length > 0) {
-            Array.prototype.forEach.call(elements, function (element, index) {
+           forEach(elements, function (element, index) {
                 var event
                 if (document.createEvent) {
                     event = document.createEvent("HTMLEvents");
@@ -669,7 +682,7 @@ var aidJS = function (query) {
             }
         } else {
             if (elements.length > 0) {
-                Array.prototype.forEach.call(elements, function (element, index) {
+               forEach(elements, function (element, index) {
                     if (element.tagName.toLowerCase() === 'input'
                     &&
                     element.type.toLowerCase() === 'checkbox') {
