@@ -3,6 +3,8 @@
  * (c) 2016 ITTEN, Inc. (http://itten.ir) 
  * aidJS on github (https://github.com/uxitten/aidJS/)
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.12.1 2016/10/16
+ *  - clean code
  * version 0.12.0 2016/10/15
  *  - add shortcut for Array.prototype.forEach.call
  *  - fixed bug in html function
@@ -786,57 +788,12 @@ aidJS.ajax = function (params) {
 };
 
 /*
- * browser
- * ie9+
- * version 0.0.0 2016/05/05
- */
-aidJS.browser = {
-    name: null,
-    version: null,
-    init: function () {
-        var ua = navigator.userAgent, tem,
-        M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
-        if (/trident/i.test(M[1])) {
-            tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
-            return 'IE ' + (tem[1] || '');
-        }
-        if (M[1] === 'Chrome') {
-            tem = ua.match(/\b(OPR|Edge)\/(\d+)/);
-            if (tem != null) return tem.slice(1).join(' ').replace('OPR', 'Opera');
-        }
-        M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
-        if ((tem = ua.match(/version\/(\d+)/i)) != null) M.splice(1, 1, tem[1]);
-        this.name = M[0];
-        this.version = M[1];
-    }
-};
-
-/*
  * copy object
  * ?
  * version 0.0.0 2016/05/14
  */
 aidJS.copy = function (obj) {
     return JSON.parse(JSON.stringify(obj));
-};
-
-/*
- * for debug mode
- * ?
- * version 0.0.0 206/05/11
- */
-aidJS.debug = true;
-
-/*
- * log
- * ie8+, chrome1+, firefox4+, opera1+, safari1+
- * version 0.0.0 2016/05/05
- */
-aidJS.log = function () {
-    if (aidJS.debug) {
-        console.log('---------------', new Date(), '---------------');
-        console.log(arguments);
-    }
 };
 
 /*
@@ -905,31 +862,28 @@ aidJS.queryString = {
                 i--;
                 uriLength--;
             }
-        } 
+        }
         history.replaceState(null, null, location.origin + location.pathname + '?' + uri.join('&'));
     }
 }
 
 /*
- * document ready
+ * log
+ * ie8+, chrome1+, firefox4+, opera1+, safari1+
+ * version 0.0.0 2016/05/05
  */
-aidJS.ready = function () {
-    var arg = arguments,
-        func = arg[0];
-    document.addEventListener("DOMContentLoaded", function (event) {
-        aidJS.ready.fired = true;
-        var arg2 = Array.prototype.slice.call(arg);
-        arg2.shift();
-        func.apply(this, arg2);
-        return;
-    });
-    if (aidJS.ready.fired) {
-        var arg2 = Array.prototype.slice.call(arg);
-        arg2.shift();
-        func.apply(this, arg2);
+aidJS.log = function () {
+    if (aidJS.debug) {
+        console.log('---------------', new Date(), '---------------');
+        console.log(arguments);
     }
-}
+};
 
-aidJS.browser.init();
+/*
+ * for debug mode
+ * ?
+ * version 0.0.0 206/05/11
+ */
+aidJS.debug = true;
 
 window.a = window.aidJS = a = aidJS;
