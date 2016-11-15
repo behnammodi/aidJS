@@ -3,6 +3,8 @@
  * (c) 2016 ITTEN, Inc. (http://itten.ir) 
  * aidJS on github (https://github.com/uxitten/aidJS/)
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.13.0 2016/11/15
+ *  - add multi class remove
  * version 0.12.1 2016/10/16
  *  - clean code
  * version 0.12.0 2016/10/15
@@ -109,7 +111,7 @@ var aidJS = function (query) {
      */
     function forEach(iterator, func) {
         return Array.prototype.forEach.call(iterator, func);
-    }   
+    }
 
     /*
      * add class
@@ -124,13 +126,13 @@ var aidJS = function (query) {
         if (elements.length > 0) {
             if (elements[0].classList) {
                 className = className.split(' ');
-               forEach(elements, function (element, index) {
+                forEach(elements, function (element, index) {
                     className.forEach(function (value) {
                         element.classList.add(value);
                     })
                 });
             } else {
-               forEach(elements, function (element, index) {
+                forEach(elements, function (element, index) {
                     element.className += ' ' + className;
                 });
             }
@@ -149,7 +151,7 @@ var aidJS = function (query) {
      */
     function append(tobeAppended) {
         if (elements.length > 0) {
-           forEach(elements, function (element, index) {
+            forEach(elements, function (element, index) {
                 if (typeof tobeAppended === 'string') {
                     element.insertAdjacentHTML('beforeend', tobeAppended);
                 }
@@ -173,7 +175,7 @@ var aidJS = function (query) {
     function attr(attribute, value) {
         if (value !== undefined) {
             if (elements.length > 0) {
-               forEach(elements, function (element, index) {
+                forEach(elements, function (element, index) {
                     element.setAttribute(attribute, value);
                 });
             }
@@ -221,6 +223,8 @@ var aidJS = function (query) {
     /*
      * style
      * ie9+, chrome5+, firefox4+, opera12+, safari5+
+     * version 0.0.3 2016/11/14
+     *  - fixed bug in for key
      * version 0.0.2 2016/05/14
      *  - fixed bug in value arrg when typeof is number
      * version 0.0.1 2016/05/11
@@ -236,11 +240,11 @@ var aidJS = function (query) {
     function css(property, value) {
         if (typeof property === 'object' || (typeof property === 'string' && (typeof value === 'string' || typeof value === 'number'))) {
             if (elements.length > 0) {
-               forEach(elements, function (element, index) {
+                forEach(elements, function (element, index) {
                     if (typeof property === 'string') {
                         element.style[property] = value;
                     } else {
-                        for (key in property) {
+                        for (var key in property) {
                             element.style[key] = property[key];
                         }
                     }
@@ -254,7 +258,6 @@ var aidJS = function (query) {
                 return undefined;
             }
         }
-
     }
 
     /*
@@ -266,7 +269,7 @@ var aidJS = function (query) {
      */
     function empty() {
         if (elements.length > 0) {
-           forEach(elements, function (element, index) {
+            forEach(elements, function (element, index) {
                 element.innerHTML = '';
             });
         }
@@ -299,8 +302,8 @@ var aidJS = function (query) {
     function find(query) {
         var result = [];
         if (elements.length > 0) {
-           forEach(elements, function (element, index) {
-               forEach(element.querySelectorAll(query), function (elementTwo, index) {
+            forEach(elements, function (element, index) {
+                forEach(element.querySelectorAll(query), function (elementTwo, index) {
                     result.push(elementTwo);
                 });
             });
@@ -357,9 +360,9 @@ var aidJS = function (query) {
      * version 0.0.0 2016/05/05
      */
     function html(content) {
-        if (content!==undefined) {
+        if (content !== undefined) {
             if (elements.length > 0) {
-               forEach(elements, function (element, index) {
+                forEach(elements, function (element, index) {
                     element.innerHTML = content;
                 });
             }
@@ -383,7 +386,7 @@ var aidJS = function (query) {
      */
     function remove() {
         if (elements.length > 0) {
-           forEach(elements, function (element, index) {
+            forEach(elements, function (element, index) {
                 element.parentNode.removeChild(element);
             });
         }
@@ -399,7 +402,7 @@ var aidJS = function (query) {
      */
     function removeAttr(attribute) {
         if (elements.length > 0) {
-           forEach(elements, function (element, index) {
+            forEach(elements, function (element, index) {
                 element.removeAttribute(attribute);
             });
         }
@@ -409,6 +412,8 @@ var aidJS = function (query) {
     /*
      * remove class
      * ie8+
+     * version 0.1.0 2016/11/15
+     *  - add remove multi class 
      * version 0.0.1 2016/05/11
      *  - fixed bug
      * version 0.0.0 2016/05/05
@@ -416,12 +421,15 @@ var aidJS = function (query) {
     function removeClass(className) {
         if (elements.length > 0) {
             if (elements[0].classList) {
-               forEach(elements, function (element, index) {
-                    element.classList.remove(className);
+                className = className.split(' ');
+                forEach(elements, function (element, index) {
+                    className.forEach(function (value) {
+                        element.classList.remove(value);
+                    })
                 });
             }
             else {
-               forEach(elements, function (element, index) {
+                forEach(elements, function (element, index) {
                     element.className = element.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
                 });
             }
@@ -440,7 +448,7 @@ var aidJS = function (query) {
      */
     function off(eventName, eventHandler) {
         if (elements.length > 0) {
-           forEach(elements, function (element, index) {
+            forEach(elements, function (element, index) {
                 element.removeEventListener(eventName, eventHandler, false);
             });
         }
@@ -476,7 +484,7 @@ var aidJS = function (query) {
         if (elements.length > 0) {
             var selfArguments = arguments;
             if (selfArguments.length === 3) {
-               forEach(elements, function (element, index) {
+                forEach(elements, function (element, index) {
                     element.addEventListener(selfArguments[0], function (event) {
                         var target = a(event.target).closest(selfArguments[1]);
                         if (target == undefined) return false;
@@ -485,7 +493,7 @@ var aidJS = function (query) {
                     }, false);
                 });
             } else {
-               forEach(elements, function (element, index) {
+                forEach(elements, function (element, index) {
                     element.addEventListener(selfArguments[0], selfArguments[1], false);
                 });
             }
@@ -558,7 +566,7 @@ var aidJS = function (query) {
      */
     function prepend(insertElement) {
         if (elements.length > 0) {
-           forEach(elements, function (element, index) {
+            forEach(elements, function (element, index) {
                 element.insertBefore(insertElement, element.firstChild);
             });
         }
@@ -614,7 +622,7 @@ var aidJS = function (query) {
     function text(content) {
         if (content !== undefined) {
             if (elements.length > 0) {
-               forEach(elements, function (element, index) {
+                forEach(elements, function (element, index) {
                     element.textContent = content;
                 });
             }
@@ -637,7 +645,7 @@ var aidJS = function (query) {
      */
     function trigger(eventName) {
         if (elements.length > 0) {
-           forEach(elements, function (element, index) {
+            forEach(elements, function (element, index) {
                 var event
                 if (document.createEvent) {
                     event = document.createEvent("HTMLEvents");
@@ -684,10 +692,10 @@ var aidJS = function (query) {
             }
         } else {
             if (elements.length > 0) {
-               forEach(elements, function (element, index) {
+                forEach(elements, function (element, index) {
                     if (element.tagName.toLowerCase() === 'input'
-                    &&
-                    element.type.toLowerCase() === 'checkbox') {
+                        &&
+                        element.type.toLowerCase() === 'checkbox') {
                         element.checked = value;
                     } else {
                         element.value = value;
@@ -875,7 +883,7 @@ aidJS.queryString = {
 aidJS.log = function () {
     if (aidJS.debug) {
         console.log('---------------', new Date(), '---------------');
-        console.log(arguments);
+        console.log.apply(this, arguments);
     }
 };
 
@@ -886,4 +894,4 @@ aidJS.log = function () {
  */
 aidJS.debug = true;
 
-window.a = window.aidJS = a = aidJS;
+window.a = window.aidJS = aidJS;
