@@ -3,6 +3,10 @@
  * (c) 2016 ITTEN, Inc. (http://itten.ir) 
  * aidJS on github (https://github.com/uxitten/aidJS/)
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.13.2 2016/11/16
+ *  - fixed bug in append
+ * version 0.13.1 2016/11/15
+ *  - remove aidJS.log
  * version 0.13.0 2016/11/15
  *  - add multi class remove
  * version 0.12.1 2016/10/16
@@ -141,23 +145,30 @@ var aidJS = function (query) {
     }
 
     /*
-     * append
-     * ie9+
+     * append  
+     * - appendChild      
+     * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari
+     * Basic support	(Yes)	1.7     (Yes)	            (Yes)	(Yes)
+     * -------------------------------------------------------------------------------
+     * - createTextNode
+     * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari
+     * Basic support	(Yes)	(Yes)   (Yes)	            (Yes)	?
+     * -------------------------------------------------------------------------------
+     * version 0.0.2 2016/11/16
+     *  - fixed bug 
      * version 0.0.1 2016/05/11
      *  - fixed bug
      * version 0.1.0 2016/05/06
      *  - added the string appending feature
      * version 0.0.0 2016/05/05
      */
-    function append(tobeAppended) {
+    function append(insertElement) {
         if (elements.length > 0) {
+            if (typeof (insertElement) !== 'object') {
+                insertElement = document.createTextNode(insertElement);
+            }
             forEach(elements, function (element, index) {
-                if (typeof tobeAppended === 'string') {
-                    element.insertAdjacentHTML('beforeend', tobeAppended);
-                }
-                else {
-                    element.appendChild(tobeAppended);
-                }
+                element.appendChild(insertElement);
             });
         }
         return this;
@@ -639,6 +650,8 @@ var aidJS = function (query) {
     /*
      * trigger
      * ie9+
+     * version 0.0.2 2016/11/15
+     *  - fixed bug
      * version 0.0.1 2016/05/11
      *  - fixed bug
      * version 0.0.0 2016/05/09
@@ -646,7 +659,7 @@ var aidJS = function (query) {
     function trigger(eventName) {
         if (elements.length > 0) {
             forEach(elements, function (element, index) {
-                var event
+                var event = null;
                 if (document.createEvent) {
                     event = document.createEvent("HTMLEvents");
                     event.initEvent(eventName, true, true);
@@ -874,18 +887,6 @@ aidJS.queryString = {
         history.replaceState(null, null, location.origin + location.pathname + '?' + uri.join('&'));
     }
 }
-
-/*
- * log
- * ie8+, chrome1+, firefox4+, opera1+, safari1+
- * version 0.0.0 2016/05/05
- */
-aidJS.log = function () {
-    if (aidJS.debug) {
-        console.log('---------------', new Date(), '---------------');
-        console.log.apply(this, arguments);
-    }
-};
 
 /*
  * for debug mode
