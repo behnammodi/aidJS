@@ -1,8 +1,10 @@
 /*
  * aidJS v0.11.0
- * (c) 2016 ITTEN, Inc. (http://itten.ir) 
+ * (c) 2016 ITTEN, Inc. (http://itten.ir)
  * aidJS on github (https://github.com/uxitten/aidJS/)
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.14.0 2016/11/26
+ *  - support html string format in append function
  * version 0.13.3 2016/11/16
  *  - add Browser support commnet
  *  - fixed bug
@@ -17,7 +19,7 @@
  * version 0.12.0 2016/10/15
  *  - add shortcut for Array.prototype.forEach.call
  *  - fixed bug in html function
- * version 0.11.0 2016/08/14 
+ * version 0.11.0 2016/08/14
  *  - add a.copy for copy object
  *  - add clean and remove function in a.queryString
  *  - add a.ready
@@ -28,7 +30,7 @@
  * version 0.8.4 2016/05/29
  *  - fixed bug in on and off method
  * version 0.8.3 2016/05/22
- *  - remove observable 
+ *  - remove observable
  * version 0.8.2 2016/05/22
  *  - fixed bug in addClass
  * version 0.8.1 2016/05/18
@@ -63,7 +65,7 @@
  *  - add scrollLeft method in a
  *  - add value method in a
  * version 0.4.0 2016/05/07
- *  - add observable first version 
+ *  - add observable first version
  * version 0.3.3 2016/05/07
  *  - performance improvemnt in css
  * version 0.3.2 2016/05/07
@@ -122,7 +124,7 @@ var aidJS = function (query) {
 
     /*
      * add class
-     * - classList      
+     * - classList
      * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari	Edge
      * Basic support	8.0  	3.6     10	                11.5	5.1     (Yes)
      * -------------------------------------------------------------------------------
@@ -159,17 +161,19 @@ var aidJS = function (query) {
     }
 
     /*
-     * append  
-     * - appendChild      
+     * append
+     * - appendChild
      * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari	Edge
      * Basic support	(Yes)	1.7     (Yes)	            (Yes)	(Yes)   ?
      * -------------------------------------------------------------------------------
-     * - createTextNode
+     * - insertAdjacentHTML
      * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari	Edge
-     * Basic support	(Yes)	(Yes)   (Yes)	            (Yes)	?       ?
+     * Basic support	1.0 	8.0     4.0	                7.0 	4.0     (Yes)
      * -------------------------------------------------------------------------------
+     * version 0.1.0 2016/11/26
+     *  - support html string format
      * version 0.0.2 2016/11/16
-     *  - fixed bug 
+     *  - fixed bug
      * version 0.0.1 2016/05/11
      *  - fixed bug
      * version 0.1.0 2016/05/06
@@ -178,12 +182,15 @@ var aidJS = function (query) {
      */
     function append(insertElement) {
         if (elements.length > 0) {
-            if (typeof (insertElement) !== 'object') {
-                insertElement = document.createTextNode(insertElement);
+            if (typeof (insertElement) === 'object') {
+                forEach(elements, function (element, index) {
+                    element.appendChild(insertElement);
+                });
+            } else {
+                forEach(elements, function (element, index) {
+                    element.insertAdjacentHTML('beforeend', insertElement);
+                });
             }
-            forEach(elements, function (element, index) {
-                element.appendChild(insertElement);
-            });
         }
         return this;
     }
@@ -197,7 +204,7 @@ var aidJS = function (query) {
      * - getAttribute
      * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari	Edge
      * Basic support	29   	23      (Yes)	            (Yes)	6       ?
-     * -------------------------------------------------------------------------------    
+     * -------------------------------------------------------------------------------
      * - attributes
      * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari	Edge
      * Basic support	(Yes)	(Yes)   6.1 	            (Yes)	(Yes)   (Yes)
@@ -279,11 +286,11 @@ var aidJS = function (query) {
      * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari	Edge
      * Basic support	(Yes)	(Yes)   9   	            (Yes)	(Yes)   (Yes)
      * -------------------------------------------------------------------------------
-     * * - getComputedStyle on pseudo element 	
+     * * - getComputedStyle on pseudo element
      * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari	Edge
      * Basic support	(Yes)	(Yes)   9   	            15  	(Yes)   (Yes)
      * -------------------------------------------------------------------------------
-     * - currentStyle	
+     * - currentStyle
      * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari	Edge
      * Basic support	(No)	(No)    6   	            No  	(No)    (No)
      * -------------------------------------------------------------------------------
@@ -295,10 +302,10 @@ var aidJS = function (query) {
      *  - fixed bug in value arrg when typeof is number
      * version 0.0.1 2016/05/11
      *  - fixed bug
-     * version 0.1.2 2016/05/07 
-     *  - performance improvemnt 
+     * version 0.1.2 2016/05/07
+     *  - performance improvemnt
      * version 0.1.1 2016/05/07
-     *  - fixed bug in return property value 
+     *  - fixed bug in return property value
      * version 0.1.0 2016/05/05
      *  - add polyfill property arrgument
      * version 0.0.0 2016/05/05
@@ -395,7 +402,7 @@ var aidJS = function (query) {
     }
 
     /*
-     * index 
+     * index
      * - call
      * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari	Edge
      * Basic support	(Yes)	(Yes)   (Yes)	            (Yes)	(Yes)   (Yes)
@@ -529,7 +536,7 @@ var aidJS = function (query) {
      * Basic support	?       ?       ?                   ?       ?       ?
      * -------------------------------------------------------------------------------
      * version 0.1.0 2016/11/15
-     *  - add remove multi class 
+     *  - add remove multi class
      * version 0.0.1 2016/05/11
      *  - fixed bug
      * version 0.0.0 2016/05/05
@@ -650,7 +657,7 @@ var aidJS = function (query) {
     /*
      * outerWidth
      * ie9+
-     * version 0.0.0 2016/05/     
+     * version 0.0.0 2016/05/
      */
     function outerWidth(withMargin) {
         if (elements.length > 0) {
@@ -816,7 +823,7 @@ var aidJS = function (query) {
      * - toLowerCase
      * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari	Edge
      * Basic support	(Yes)   (Yes)   (Yes)               (Yes)   (Yes)   (Yes)
-     * -------------------------------------------------------------------------------    
+     * -------------------------------------------------------------------------------
      * version 0.1.0 2016/05/17
      *  - now work with input type checkbox
      * version 0.0.2 2016/05/14
@@ -894,7 +901,7 @@ var aidJS = function (query) {
  * - XMLHttpRequest
  * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari	Edge
  * Basic support	1       1.0     7                   (Yes)   1.2     (Yes)
- * ------------------------------------------------------------------------------- 
+ * -------------------------------------------------------------------------------
  * version 0.3.0 2016/06/01
  *  - add headers arrg
  * version 0.2.0 2016/05/29
@@ -907,7 +914,7 @@ var aidJS = function (query) {
  *  - fixed bug
  * version 0.0.1 2016/05/06
  *  - fixed bug
- * version 0.0.0 2016/05/05   
+ * version 0.0.0 2016/05/05
  */
 aidJS.ajax = function (params) {
     params = params || {};
@@ -951,7 +958,7 @@ aidJS.ajax = function (params) {
  * - toLowerCase
  * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari	Edge
  * Basic support	(Yes)   3.5     8.0                 10.5    4.0     (Yes)
- * ------------------------------------------------------------------------------- 
+ * -------------------------------------------------------------------------------
  * version 0.0.0 2016/05/14
  */
 aidJS.copy = function (obj) {
@@ -963,7 +970,7 @@ aidJS.copy = function (obj) {
  * - toLowerCase
  * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari	Edge
  * Basic support	5.0     4.0     10                  11.5    5     (Yes)
- * ------------------------------------------------------------------------------- 
+ * -------------------------------------------------------------------------------
  * version 0.0.0 2016/05/15
  */
 aidJS.queryString = {
@@ -978,7 +985,7 @@ aidJS.queryString = {
         }
     },
     /*
-     * set key value   
+     * set key value
      * version 0.1.0 2016/05/18
      *  - add data to state
      * version 0.0.1 2016/05/17
