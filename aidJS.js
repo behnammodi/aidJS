@@ -1,8 +1,10 @@
 /*
- * aidJS v0.11.0
- * (c) 2016 ITTEN, Inc. (http://itten.ir)
+ * aidJS v0.15.0
+ * (c) 2017 ITTEN, Inc. (http://itten.ir)
  * aidJS on github (https://github.com/uxitten/aidJS/)
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.15.0 2017/01/17
+ *  - add aidJS.extend method
  * version 0.14.0 2016/11/26
  *  - support html string format in append function
  * version 0.13.3 2016/11/16
@@ -964,6 +966,26 @@ aidJS.ajax = function (params) {
 aidJS.copy = function (obj) {
     return JSON.parse(JSON.stringify(obj));
 };
+
+/*
+ * extend
+ * - hasOwnProperty
+ * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari	Edge
+ * Basic support	(Yes)   (Yes)   (Yes)               (Yes)   (Yes)   (Yes)
+ * -------------------------------------------------------------------------------
+ * - for in
+ * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari	Edge
+ * Basic support	(Yes)   (Yes)   6                   (Yes)   (Yes)   (Yes)
+ * -------------------------------------------------------------------------------
+ * version 0.0.0 2017/01/17
+ */
+aidJS.extend = function () {
+    var objectCount = arguments.length;
+    var objectTarget = arguments[0];
+    for (var i = 1; i < objectCount; i++) for (var key in arguments[i])
+        if (arguments[i].hasOwnProperty(key)) objectTarget[key] = arguments[i][key];
+    return objectTarget;
+}
 
 /*
  * queryString
