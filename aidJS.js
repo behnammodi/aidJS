@@ -3,6 +3,8 @@
  * (c) 2017 ITTEN, Inc. (http://itten.ir)
  * aidJS on github (https://github.com/uxitten/aidJS/)
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * version 0.15.1 2017/01/18
+ *  - add deep arg in aidJS.extend method
  * version 0.15.0 2017/01/17
  *  - add aidJS.extend method
  * version 0.14.0 2016/11/26
@@ -969,6 +971,10 @@ aidJS.copy = function (obj) {
 
 /*
  * extend
+ * - call
+ * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari	Edge
+ * Basic support	(Yes)   (Yes)   (Yes)               (Yes)   (Yes)   (Yes)
+ * -------------------------------------------------------------------------------
  * - hasOwnProperty
  * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari	Edge
  * Basic support	(Yes)   (Yes)   (Yes)               (Yes)   (Yes)   (Yes)
@@ -977,15 +983,36 @@ aidJS.copy = function (obj) {
  * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari	Edge
  * Basic support	(Yes)   (Yes)   6                   (Yes)   (Yes)   (Yes)
  * -------------------------------------------------------------------------------
+ * version 1.0.0 2017/01/18
+ *  - add deep mode
  * version 0.0.0 2017/01/17
  */
 aidJS.extend = function () {
-    var objectCount = arguments.length;
-    var objectTarget = arguments[0];
-    for (var i = 1; i < objectCount; i++) for (var key in arguments[i])
-        if (arguments[i].hasOwnProperty(key)) objectTarget[key] = arguments[i][key];
-    return objectTarget;
-}
+    var extended = {},
+        deep = false,
+        i = 0,
+        length = arguments.length;
+    if (Object.prototype.toString.call(arguments[0]) === '[object Boolean]') {
+        deep = arguments[0];
+        i++;
+    }
+    var merge = function (obj) {
+        for (var prop in obj) {
+            if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+                if (deep && Object.prototype.toString.call(obj[prop]) === '[object Object]') {
+                    extended[prop] = aidJS.extend(true, extended[prop], obj[prop]);
+                } else {
+                    extended[prop] = obj[prop];
+                }
+            }
+        }
+    };
+    for (; i < length; i++) {
+        var obj = arguments[i];
+        merge(obj);
+    }
+    return extended;
+};
 
 /*
  * queryString
