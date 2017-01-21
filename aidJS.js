@@ -1,60 +1,84 @@
 /*
- * aidJS v0.15.0
+ * aidJS
  * (c) 2017 ITTEN, Inc. (http://itten.ir)
  * aidJS on github (https://github.com/uxitten/aidJS/)
  * ie9+, chrome5+, firefox4+, opera12+, safari5+
+ * 
+ * version 0.15.2 2017/01/21
+ *  - comment improvemnt
+ * 
  * version 0.15.1 2017/01/18
  *  - add deep arg in aidJS.extend method
+ * 
  * version 0.15.0 2017/01/17
  *  - add aidJS.extend method
+ * 
  * version 0.14.0 2016/11/26
  *  - support html string format in append function
+ * 
  * version 0.13.3 2016/11/16
  *  - add Browser support commnet
  *  - fixed bug
+ * 
  * version 0.13.2 2016/11/16
  *  - fixed bug in append
+ * 
  * version 0.13.1 2016/11/15
  *  - remove aidJS.log
+ * 
  * version 0.13.0 2016/11/15
  *  - add multi class remove
+ * 
  * version 0.12.1 2016/10/16
  *  - clean code
+ * 
  * version 0.12.0 2016/10/15
  *  - add shortcut for Array.prototype.forEach.call
  *  - fixed bug in html function
+ * 
  * version 0.11.0 2016/08/14
  *  - add a.copy for copy object
  *  - add clean and remove function in a.queryString
  *  - add a.ready
+ * 
  * version 0.10.0 2016/06/01
  *  - add headers arrg in ajax
+ * 
  * version 0.9.0 2016/05/29
  *  - add return XMLHttpRequest in ajax method
+ * 
  * version 0.8.4 2016/05/29
  *  - fixed bug in on and off method
+ * 
  * version 0.8.3 2016/05/22
  *  - remove observable
+ * 
  * version 0.8.2 2016/05/22
  *  - fixed bug in addClass
+ * 
  * version 0.8.1 2016/05/18
  *  - add data to state in methos set querystring
  *  - add index method
  *  - value method now work with input type checkbox
  *  - add clean method in queryString
  *  - overwrite set in queryString
+ * 
  * version 0.8.0 2016/05/15
  *  - add complete handler in ajax
  *  - add queryString feature
+ * 
  * version 0.7.0 2016/05/14
  *  - add a.copy method
  *  - fixed bug
  *  - remove version attr in a
+ * 
  * version 0.6.2 2016/05/11
  *  - add aidJS.debug
  *  - fixed bug
+ * 
  * version 0.6.1 2016/05/10
  *  - add query in console.warn
+ * 
  * version 0.6.0 2016/05/09
  *  - add elements prop for access pure elements
  *  - add trigger in a
@@ -63,27 +87,36 @@
  *  - add removeAttr method in a
  *  - fixed bug set value in attr
  *  - fixed bug in parent
+ * 
  * version 0.5.0 2016/05/08
  *  - add find method in a
  *  - add closest method in a
  *  - add scrollLeft method in a
  *  - add value method in a
+ * 
  * version 0.4.0 2016/05/07
  *  - add observable first version
+ * 
  * version 0.3.3 2016/05/07
  *  - performance improvemnt in css
+ * 
  * version 0.3.2 2016/05/07
  *  - fixed bug in return property value in css
  *  - fixed bug in eq
+ * 
  * version 0.3.1 2016/05/06
  *  - fixed bug in a.ajax
+ * 
  * version 0.3.0 2016/05/06
  *  - redesign structure
+ * 
  * version 0.2.0 2016/05/05
  *  - add polyfill propertie arrgument in css
  *  - add scrollTop in a
+ * 
  * version 0.1.0 2016/05/05
  *  - add count in a
+ * 
  * version 0.0.0 2016/05/05
  */
 
@@ -719,7 +752,7 @@ var aidJS = function (query) {
      * scrollLeft
      * - scrollLeft
      * Feature	        Chrome  Firefox Internet Explorer   Opera	Safari	Edge
-     * Basic support	(Yes)   ?       ?                   ?       ?       ?
+     * Basic support	(Yes)   (Yes)   (Yes)               (Yes)   (Yes)   (Yes)
      * -------------------------------------------------------------------------------
      * version 0.0.1 2016/05/11
      *  - fixed bug
